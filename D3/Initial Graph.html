@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <title>D3 Test</title>
+      <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+      <style>
+          div.bar{
+              display: inline-block;
+              width:20px;
+              height:75px;
+              background-color: teal;
+              margin-right: 2px;
+          }
+      </style>
+  </head>
+  <body>
+    <button onclick="neutral()"> Neutrality </button>
+      <button onclick="positive()"> Positivity </button>
+      <button onclick="negative()"> Negativity </button>
+      <button onclick="none()"> No filter </button>
+      
+    <script type="text/javascript">
+        // D3 code here
+        var maxNeu = 1;
+        var maxNeg = 0.084;
+        var maxPos = 0.414;
+        function none(){
+                d3.selectAll('rect').attr('fill',function(d){
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+                    r = Math.round(r * d.vaderSentiment.neu/maxNeu);
+                    g = Math.round(g * d.vaderSentiment.pos/maxPos)
+                    b = Math.round(b * d.vaderSentiment.neg/maxNeg);
+                    return ((((('rgb('.concat(r.toString())).concat(',')).concat(g.toString())).concat(',')).concat(b.toString())).concat(')');
+            });
+            }
+        function neutral(){
+                d3.selectAll('rect').attr('fill',function(d){
+                    var r = 255;
+                    var g = 0;
+                    var b = 0;
+                    r = Math.round(r * d.vaderSentiment.neu/maxNeu);
+                    g = Math.round(g * d.vaderSentiment.pos/maxPos)
+                    b = Math.round(b * d.vaderSentiment.neg/maxNeg);
+                    return ((((('rgb('.concat(r.toString())).concat(',')).concat(g.toString())).concat(',')).concat(b.toString())).concat(')');
+            });
+            }
+        function positive(){
+                d3.selectAll('rect').attr('fill',function(d){
+                    var r = 0;
+                    var g = 255;
+                    var b = 0;
+                    r = Math.round(r * d.vaderSentiment.neu/maxNeu);
+                    g = Math.round(g * d.vaderSentiment.pos/maxPos)
+                    b = Math.round(b * d.vaderSentiment.neg/maxNeg);
+                    return ((((('rgb('.concat(r.toString())).concat(',')).concat(g.toString())).concat(',')).concat(b.toString())).concat(')');
+            });
+            }
+        function negative(){
+                d3.selectAll('rect').attr('fill',function(d){
+                    var r = 0;
+                    var g = 0;
+                    var b = 255;
+                    r = Math.round(r * d.vaderSentiment.neu/maxNeu);
+                    g = Math.round(g * d.vaderSentiment.pos/maxPos)
+                    b = Math.round(b * d.vaderSentiment.neg/maxNeg);
+                    return ((((('rgb('.concat(r.toString())).concat(',')).concat(g.toString())).concat(',')).concat(b.toString())).concat(')');
+            });
+            }
+        d3.json("../Data/sentiment.json",function(error,graph){
+            
+//            d3.select("body")
+//                .selectAll("div")
+//                .data(dataset)
+//                .enter()
+//                .append('div')
+//                .attr("class","bar")
+//                .style("height",function(d){return d*5 + "px";});
+            p = []
+            n = []
+            ne = []
+            cmp = []
+            for(var i =0; i<292; i++){
+                p.push(graph[i].vaderSentiment.pos);
+                n.push(graph[i].vaderSentiment.neg);
+                ne.push(graph[i].vaderSentiment.neu);
+                cmp.push(graph[i].vaderSentiment.compound);
+            }
+            var maxPos = d3.max(p);
+            var maxNeg = d3.max(n);
+            var maxNeu = d3.max(ne);
+            var maxCmp = d3.max(cmp);
+//            console.log(maxCmp);
+//            var y = d3.scale.linear().range([400,0]);
+//            y.domain(d3.extent(graph,function(d){return d.lenArticle}));
+//            var x = d3.scale.linear()
+//                    .range([0,800]);
+//            x.domain(d3.extent(graph,function(d){return new Date(Date.parse(d.date))}));
+//            var xAxis = d3.svg.axis()
+//                .scale(x)
+//                .orient('bottom')
+//                .ticks(0);
+            var svg = d3.select('body')
+                    .append('svg')
+                    .attr('width',1300)
+                    .attr('height',600);
+//            svg.append('g')
+//                .attr('class','x axis')
+//                .call(xAxis);
+            
+            var rects = svg.selectAll('rect')
+                    .data(graph);
+            var newRects = rects.enter();
+            
+            var maxCount = d3.max(graph, function(d, i) {
+              return new Date(Date.parse(d.date));
+            });
+            
+            var x = d3.scale.linear()
+              .range([0, 1300])
+              .domain(d3.extent(graph,function(d){return new Date(Date.parse(d.date))}));
+            var y = d3.scale.linear()
+              .range([0, 600])
+              .domain([0,600]);
+            
+//            var xAxis = d3.svg.axis()
+//                    .scale(x)
+//                    .orient('bottom');
+//            var yAxis = d3.svg.axis()
+//                    .scale(y)
+//                    .orient('left');
+//            
+            newRects.append('rect')
+              .attr('height', y(600))
+              .attr('x', function(d, i) {
+                return x(new Date(Date.parse(d.date)));
+              })
+              .attr('width', 4)
+              .attr('y', function(d, i) {
+                return y(d.lenArticle);
+              })
+                .attr('fill',function(d){
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+                    g = Math.round(g * d.vaderSentiment.neu/maxNeu);
+                    r = Math.round(r * d.vaderSentiment.pos/maxPos)
+                    b = Math.round(b * d.vaderSentiment.neg/maxNeg);
+                    return ((((('rgb('.concat(r.toString())).concat(',')).concat(g.toString())).concat(',')).concat(b.toString())).concat(')');
+            });
+//            svg.append('g').attr('class','x axis').call(xAxis);
+//            svg.append('g').attr('class','y axis').call(yAxis);
+            
+            
+//        console.log(maxPos);
+        });
+        
+    </script>
+      
+  </body>
+</html>
