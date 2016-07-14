@@ -6,11 +6,12 @@ from dirbot.items import Website
 
 # The following line imports the sentiment analysis tool
 from vaderSentiment.vaderSentiment import sentiment as vaderSentiment
+# The following line imports the natural language tool kit
+import nltk
 
 class DmozSpider(Spider):
     name = "dmoz"
     # allowed_domains = ["cse.ust.hk"]
-    AUTO_THROTTLE_ENABLED = True
     start_urls = [
         "http://www.cse.ust.hk/News/",
 	"http://www.cse.ust.hk/pg/defenses/pastthesisdef.html",
@@ -44,9 +45,9 @@ class DmozSpider(Spider):
     def parse_other_contents(self,response):
         item = Website()
         if "seminar" in response.url:
-            item["type"] = "Seminar"
+            item["category"] = "Seminar"
         else:
-            item["type"] = "Thesis Defense"
+            item["category"] = "Thesis Defense"
         item['name'] = response.xpath('//h1/text()').extract()
         item['description'] = response.xpath('//pre/text()').extract()[0]
         item['lenArticle']= len(item['description'].split())
@@ -60,7 +61,7 @@ class DmozSpider(Spider):
     def parse_Contents(self,response):
         # This creates an instance of the item, the definition of which is stored in items.py
         item = Website()
-        item['type'] = "News"
+        item['category'] = "News"
         
         # The if statement checks if there exists a div with id = 'maincontent', suggesting we are on the cse website, hence no error will be thrown
         if (response.xpath('//div[@id="maincontent"]') != []):
