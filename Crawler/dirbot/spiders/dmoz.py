@@ -30,7 +30,7 @@ class DmozSpider(Spider):
 	for href in response.xpath('//div[@id="maincontent"]/ul[not(@class="hnav")]/li/a/@href'):
             url = response.urljoin(href.extract())
             yield scrapy.Request(url, callback=self.parse_Contents)
-        print "it worked"
+##        print "it worked"
 
     def parse_Other(self,response):
         for href in response.xpath('//div[@id="maincontent"]/ul/li/a/@href'):
@@ -49,9 +49,9 @@ class DmozSpider(Spider):
         else:
             item["category"] = "Thesis Defense"
         item['name'] = response.xpath('//h1/text()').extract()
-        item['description'] = response.xpath('//pre/text()').extract()[0]
-        item['lenArticle']= len(item['description'].split())
-        item['vaderSentiment'] = vaderSentiment(item['description'])
+##        item['description'] = response.xpath('//pre/text()').extract()[0]
+        item['lenArticle']= response.xpath('//pre/text()').extract()[0]
+##        item['vaderSentiment'] = vaderSentiment(item['description'])
         # This basically gets the first part of the text from the right p tag of the footer, converts it into a str, and slices the needed part
         dateText =  response.xpath('//div[@id="footer"]/p[@class="right"]/text()[1]').extract()
         date = dateText[0]
@@ -78,12 +78,12 @@ class DmozSpider(Spider):
                 for ptag in response.xpath('//p'):
                         temp += ptag.xpath('text()').extract()
         
-        item['description'] = "" 
+        description = "" 
         for i in temp:
-                item['description'] += i
-        item['lenArticle']= len(item['description'].split())
+                description += i
+        item['lenArticle']= description
         # This line computes the sentiment of the current article, and adds it to the solution object
-        item['vaderSentiment'] = vaderSentiment(item['description'])
+##        item['vaderSentiment'] = vaderSentiment(item['description'])
         # This basically gets the first part of the text from the right p tag of the footer, converts it into a str, and slices the needed part
         dateText =  response.xpath('//div[@id="footer"]/p[@class="right"]/text()[1]').extract()
         date = dateText[0]
