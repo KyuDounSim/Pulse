@@ -9,3 +9,4 @@ class Website(Item):
     vaderSentiment = Field()
     category = Field()
     fdist = Field()
+    topic = Field()
