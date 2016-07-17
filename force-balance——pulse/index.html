@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>force-balance</title>
+<style>
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+
+  body{
+    background-color: beige;
+  }
+
+.lable{
+  color: #666;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script>
+
+var width = 1200,
+    height = 800,
+    radius = 200, 
+    padding = 6, // separation between nodes
+    maxRadius = 20, //max r of nodes
+    minRadius=5; //min r of nodes
+
+var color = d3.scale.category20();
+
+var force = d3.layout.force()
+    //.charge(-50)
+    //.linkDistance(12)
+       // .gravity(0.1)
+    .size([4*radius, 4*radius]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+d3.json("myCreate.json", function(error, graph) {
+ 
+//matipulate the data
+
+var orderByCategory=d3.nest()
+                  .key(function(d){return d.category}).sortKeys(d3.ascending)
+                  .rollup(function(leaves){return leaves.length;})
+                  .entries(graph);
+
+var orderByDate=d3.nest()
+                .key(function(d){return d.date}).sortKeys(d3.ascending)
+                .rollup(function(leaves){return leaves.length;})
+                .entries(graph);                 
+
+var orderByDateByCategory=d3.nest()
+                .key(function(d){return d.date}).sortKeys(d3.ascending)
+                .key(function(d){return d.category}).sortKeys(d3.ascending)
+                .rollup(function(leaves){return leaves.length;})
+                .entries(graph);
+
+
+//size scale of the node
+        var min=0;
+        var max=0;
+  for (var i = orderByDate.length - 1; i >= 0; i--) {
+     if (orderByDate[i].values>max) {max=orderByDate[i].values};
+     if (orderByDate[i].values<min) {min=orderByDate[i].values};
+   }; 
+   
+  var sizeScale=d3.scale.linear()
+            .domain([min,max])
+            .range([minRadius,maxRadius]);
+
+
+//label
+  var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<div style='color: #666'><strong>Date:</strong> <span >" + d.date + "</span> <br/ > <strong>artical published:</strong> <span>" + d.numberOfArticles + "</span></div>";
+  })
+
+  svg.call(tip);
+
+  
+
+var colorCategory=d3.scale.ordinal()
+            .domain(["thesisDefence","achievement","news","event"])
+            .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345']);
+
+var labelBoxes = svg.selectAll(".label")
+        .data(orderByCategory)
+        .enter()
+        .append("g")
+        .attr("class","label");
+var labelRect = labelBoxes.append("rect")
+        .attr("x",40)
+        .attr("y",function(d,index){
+            return 20+index*30;
+        })
+        .attr("width",20)
+        .attr("height",20)
+        .attr("fill",function(d){
+            if(d == "Unknow") return "#999";
+            return colorCategory(d.key);
+        })
+        .attr("opacity",0.4);
+var labelText = labelBoxes.append("text")
+        .text(function(d){
+            return d.key;
+        })
+        .style("fill","#666")
+        .attr("x",function(d,index){
+            return 80;
+        })
+        .attr("y",function(d,index){
+            return 35+index*30;
+        });
+
+  
+//arc
+  var pie=d3.layout.pie()
+        .padAngle(.02)
+        .value(function(d){return d.values }) 
+
+
+ var arc=d3.svg.arc()
+        .outerRadius(radius + 70)
+        .innerRadius(radius + 50);
+
+
+  var g = svg.selectAll(".arc")
+      .data(pie(orderByCategory))
+    .enter().append("g")
+      .attr("class", "arc")
+      .attr("opacity",0.4)
+      .append("g")
+    .attr("transform","translate("+2*radius+","+2*radius+")");
+  
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return colorCategory(d.data.key); });
+
+
+//calculate the force position
+
+  var forcePositionX={},forcePositionY={};
+  for (var i =orderByCategory.length - 1; i >= 0; i--) {
+    var angle=0.5*(pie(orderByCategory)[i].startAngle+pie(orderByCategory)[i].endAngle);
+  forcePositionX[i]=Math.sin(angle)*(radius);
+  forcePositionY[i]=-Math.cos(angle)*(radius);
+  }
+
+//map the data
+  var numberOfAchievement=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfEvent=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfNews=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfThesisDefence=d3.range(orderByDate.length).map(function(){return 0});
+
+
+  var dateNode=d3.range(orderByDate.length).map(function(d,i){
+                  var category=orderByDateByCategory[i].values;
+                 
+
+                  for (var n =0; n <= category.length - 1; n++) {
+                    switch(category[n].key){
+                      case "news":
+                      numberOfNews[i]=category[n].values;
+                      break;
+
+                      case "achievement":
+                      numberOfAchievement[i]=category[n].values;
+                      break;
+
+                      case "event":
+                      numberOfEvent[i]=category[n].values;
+                      break;
+
+                      case "thesisDefence":
+                      numberOfThesisDefence[i]=category[n].values;
+                      break;
+
+
+                    }
+                  }
+   
+                return{date:orderByDate[i].key,
+                       numberOfArticles:orderByDate[i].values,
+                       radius:sizeScale(orderByDate[i].values),
+                       numberOfAchievement:numberOfAchievement[i],
+                       numberOfEvent:numberOfEvent[i],
+                       numberOfNews:numberOfNews[i],
+                       numberOfThesisDefence:numberOfThesisDefence[i]
+
+
+                      }
+                })
+
+
+
+force
+      .nodes(dateNode)
+      .on('tick',tick)
+      .start()
+
+
+  var node = svg
+      .append('g')
+      .attr("transform","translate("+2*radius+","+2*radius+")")
+      .selectAll("circle")
+      .data(dateNode)
+    .enter().append("circle")
+      .attr("class", "node")
+       .on('mouseover', tip.show)
+      .on('mouseout', tip.hide)
+      .attr("r", function(d){return sizeScale(d.numberOfArticles)})
+      .style("fill", function(d) { return color(d.date); })
+      .call(force.drag);
+
+function tick(e) {
+/*
+  var k = 6 * e.alpha;
+  orderByDate.forEach(function(o, i) {
+    //console.log(i);
+    o.y += i & 1 ? k : -k;
+    o.x += i & 2 ? k : -k;
+    
+  });
+*/
+
+  node
+      .each(gravity(.8 * e.alpha))
+      .each(collide(.5))
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
+    }
+
+//Move nodes toward cluster focus.
+
+
+function gravity(alpha) {
+  return function(d) {
+    d.y += (forcePositionY[0] - d.y) * alpha*d.numberOfAchievement
+           +(forcePositionY[1] - d.y) * alpha*d.numberOfEvent
+           +(forcePositionY[2] - d.y) * alpha*d.numberOfNews
+           +(forcePositionY[3] - d.y) * alpha*d.numberOfThesisDefence;
+    
+    d.x += (forcePositionX[0] - d.x) * alpha*d.numberOfAchievement
+           +(forcePositionX[1] - d.x) * alpha*d.numberOfEvent
+           +(forcePositionX[2] - d.x) * alpha*d.numberOfNews
+           +(forcePositionX[3] - d.x) * alpha*d.numberOfThesisDefence;
+  };
+}
+
+//avoid collision
+function collide(alpha) {
+  var quadtree = d3.geom.quadtree(dateNode);
+
+  return function(d) {
+    //console.log(d,radius)
+    var r = d.radius + maxRadius + padding,
+        nx1 = d.x - r,
+        nx2 = d.x + r,
+        ny1 = d.y - r,
+        ny2 = d.y + r;
+    quadtree.visit(function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== d)) {
+        var x = d.x - quad.point.x,
+            y = d.y - quad.point.y,
+            l = Math.sqrt(x * x + y * y),
+            r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
+        if (l < r) {
+          l = (l - r) / l * alpha;
+          d.x -= x *= l;
+          d.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    });
+  };
+
+}
+
+  
+});
+//loading.remove();
+
+
+
+</script>

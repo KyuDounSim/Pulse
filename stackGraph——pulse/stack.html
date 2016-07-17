@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>stacked bar chart of hkust pulse</title>
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+  background-color: #fafafa;
+}
+
+
+
+
+
+.xFAxis path,
+.xFAxis line,
+.yAxis path,
+.yAxis line{
+  fill: none;
+  stroke: #333;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.xCAxis path,
+.xCAxis line{
+  fill:#b7f5f0;
+  stroke-width: 10px;
+  shape-rendering: crispEdges;
+}
+
+
+
+.brush .extent {
+  stroke: #fff;
+  stroke-width:3px;
+  fill:#879dff;
+  opacity: .25;
+  shape-rendering: crispEdges;
+}
+
+</style>
+<body>
+  <div id="title">
+    <h2>time selector</h2>
+  </div>
+  <p>I wish a bar stands for
+  <button onclick="day()">a day</button> &nbsp 
+  <button onclick="week()">a week</button> &nbsp 
+  <button onclick="month()">a month</button> </p>
+  <button onclick="resetBrush()">Clear Brush</button>
+
+  <div id="svg">
+
+</body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="/moment.js"></script>
+<script>
+
+var width = 960,
+    height = 400,
+    height2=20,
+    margin=50;
+
+var step=4;
+
+var timeSelector= "day";
+
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+
+var svg = d3.select("#svg").append("svg")
+    .attr("width", width+2*margin)
+    .attr("height", height+40*margin+2*height2);
+
+
+    svg.append("defs").append("clipPath")
+    .attr("id", "clip")
+  .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+var brush=d3.svg.brush()
+          .on("brush",brushed);
+
+
+var xF = d3.time.scale()
+    .range([0, width]);
+
+var xC=d3.time.scale()
+           .range([0,width]);
+
+var y = d3.scale.linear()
+    .range([height, 0])
+    .nice();
+
+var xFAxis = d3.svg.axis()
+    .scale(xF)
+    .orient("bottom")
+    //.tickFormat(d3.time.format("%b %Y"))
+
+var xCAxis=d3.svg.axis()
+    .scale(xC)
+    .orient("bottom")
+    //.tickFormat(d3.time.format("%b %Y"))
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(5);
+
+var focus = svg
+    .append("g")
+    .attr("class","focus")
+    .attr("transform","translate("+margin+","+(height2+margin)+")");
+
+var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin + "," + margin + ")");
+
+display();
+function display(){
+d3.json("cseAll.json",function(error,data){
+
+if (error) throw error;
+
+var orderByCategory=d3.nest()
+                      .key(function(d){return d.category}).sortKeys(d3.ascending)
+                      .rollup(function(leaves){return leaves.length})
+                      .entries(data)
+
+var orderByDate=d3.nest()
+                    .key(function(d){return d.date}).sortKeys(d3.ascending)
+                    .rollup(function(leaves){return leaves.length})
+                     .entries(data)
+
+var orderByDateByCategory=d3.nest()
+                .key(function(d){return d.date}).sortKeys(d3.ascending)
+                .key(function(d){return d.category}).sortKeys(d3.ascending)
+                .rollup(function(leaves){return leaves.length;})
+                .entries(data);
+
+var categoryList=d3.set(orderByCategory.map(function(d){return d.key})).values().sort(d3.ascending);
+
+var numberOfAchievement=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfEvent=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfNews=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfThesisDefence=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfSeminar=d3.range(orderByDate.length).map(function(){return 0})
+
+var dayNode=d3.range(orderByDate.length).map(function(d,i){
+                  var category=orderByDateByCategory[i].values;
+              
+
+                  for (var n =0; n <= category.length - 1; n++) {
+                    switch(category[n].key){
+                      case "News":
+                      numberOfNews[i]=category[n].values;
+                      break;
+
+                      case "Achievement":
+                      numberOfAchievement[i]=category[n].values;
+                      break;
+
+                      case "Event":
+                      numberOfEvent[i]=category[n].values;
+                      break;
+
+                      case "ThesisDefense":
+                      numberOfThesisDefence[i]=category[n].values;
+                      break;
+
+                      case "Seminar":
+                      numberOfSeminar[i]=category[n].values;
+                      break;
+
+
+                    }
+                  }
+                   ;
+                return{date:parseDate(orderByDate[i].key),
+                       year:moment(orderByDate[i].key,"YYYY-MM-DD").year()-2002,
+                      month:moment(orderByDate[i].key,"YYYY-MM-DD").month()-6+(moment(orderByDate[i].key,"YYYY-MM-DD").year()-2002)*12,
+                       week:Math.floor((moment(orderByDate[i].key,"YYYY-MM-DD").unix()-moment(orderByDate[0].key,"YYYY-MM-DD").unix())/(60*60*24*7)),
+                       //day:moment(orderByDate[i].key,"YYYY-MM-DD").day(),
+                       numberOfArticles:orderByDate[i].values,
+                       Achievement:numberOfAchievement[i],
+                       Event:numberOfEvent[i],
+                       News:numberOfNews[i],
+                       ThesisDefense:numberOfThesisDefence[i],
+                       Seminar:numberOfSeminar[i]
+
+
+                      }
+                })
+
+var weekNode=d3.nest()
+            .key(function(d){return d.week})
+            //.sortKeys(d3.ascending)
+            .rollup(function(leaves){return{
+              "Achievement":d3.sum(leaves,function(d){return d.Achievement;}),
+              "Event":d3.sum(leaves,function(d){return d.Event;}),
+              "News":d3.sum(leaves,function(d){return d.News;}),
+              "ThesisDefense":d3.sum(leaves,function(d){return d.ThesisDefense;}),
+              "Seminar":d3.sum(leaves,function(d){return d.Seminar;}),
+            }})
+            .entries(dayNode)
+weekNode= weekNode.map(function(d){
+  var c=d.values;
+    return {
+      date: parseDate(moment.unix((d.key)*60*60*24*7+moment(orderByDate[0].key,"YYYY-MM-DD").unix()).format("YYYY-MM-DD")),
+      Achievement: c.Achievement,
+      Event:c.Event,
+      News: c.News,
+      ThesisDefense: c.ThesisDefense,
+      Seminar:c.Seminar
+       
+  }
+  })
+
+
+var monthNode=d3.nest()
+            .key(function(d){return d.month})
+            //.sortKeys(d3.ascending)
+            .rollup(function(leaves){return{
+              "Achievement":d3.sum(leaves,function(d){return d.Achievement;}),
+              "Event":d3.sum(leaves,function(d){return d.Event;}),
+              "News":d3.sum(leaves,function(d){return d.News;}),
+              "ThesisDefense":d3.sum(leaves,function(d){return d.ThesisDefense;}),
+              "Seminar":d3.sum(leaves,function(d){return d.Seminar;}),
+            }})
+            .entries(dayNode)
+
+monthNode=monthNode.map(function(d)
+  {
+  var c=d.values;
+    return {
+      date: parseDate(moment(orderByDate[0].key,"YYYY-MM-DD").add(d.key,"month").format("YYYY-MM-DD")),
+      Achievement: c.Achievement,
+      Event:c.Event,
+      News: c.News,
+      ThesisDefense: c.ThesisDefense,
+      Seminar:c.Seminar   
+        }
+  })
+
+var colorCategory=d3.scale.ordinal()
+            .domain(categoryList)
+            .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345','#a31eff','#b2ff69']);
+
+var labelBoxes = svg.selectAll(".label")
+        .data(orderByCategory)
+        .enter()
+        .append("g")
+        .attr("class","label");
+
+var labelRect = labelBoxes.append("rect")
+        .attr("x",20+margin)
+        .attr("y",function(d,index){
+            return margin+height2+20+index*30;
+        })
+        .attr("width",20)
+        .attr("height",20)
+        .attr("fill",function(d){
+            if(d == "Unknow") return "#999";
+            return colorCategory(d.key);
+        })
+        .attr("opacity",0.4);
+var labelText = labelBoxes.append("text")
+        .text(function(d){
+            return d.key;
+        })
+        .style("fill","#666")
+        .attr("x", 60+margin)
+        .attr("y",function(d,index){
+            return margin+height2+35+index*30;
+        });
+
+var dateNode;
+
+switch(timeSelector){
+  case "day":
+  dateNode=dayNode;
+  break;
+
+  case "week":
+  dateNode=weekNode;
+  break;
+
+  case "month":
+  dateNode=monthNode;
+  break;
+}
+
+
+var n = orderByCategory.length, // number of category
+    m = dateNode.length ;// number of samples per layer
+
+
+    stack = d3.layout.stack()//.offset("wiggle")
+
+    layers = stack(categoryList.map(function(c) {
+    return d3.range(m).map(function(d,i) {
+     return {x: dateNode[i].date, y: dateNode[i][c]};
+    });
+  }));
+
+console.log(layers)
+
+   xF.domain(d3.extent(d3.extent(layers[0].map(function(d) { return d.x; }))))
+    
+    xC.domain(xF.domain());
+
+brush.x(xC)
+
+  y.domain([0, d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); })])
+   
+  
+
+//var color = d3.scale.linear()
+  //  .range(["#aad", "#556"]);
+ 
+/*  
+var areaF = d3.svg.area()
+    .x(function(d) { return xF(d.x); })
+    .y0(function(d) { return y(d.y0); })
+    .y1(function(d) { return y(d.y+d.y0); });
+
+var areaC = d3.svg.area()
+    .x(function(d) { return xC(d.x); })
+    .y0(function(d) { return y(d.y0); })
+    .y1(function(d) { return y(d.y+d.y0); })
+*/
+
+var focusLayer=focus.selectAll(".layer")
+      .data(layers)
+    .enter().append("g")
+    .attr("clip-path", "url(#clip)")
+      .attr("class", "layer")
+      .style("fill", function(d,i){return colorCategory(categoryList[i])})
+       .attr("opacity",1)
+      .on("mouseover",function(){
+        d3.select("this").attr("opacity",1)})
+       .on("mouseout",function(){
+      d3.select(this).attr("opacity",0.8)})
+
+
+      focusLayer.selectAll("rect")
+      .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("class","rect")
+    .attr("x",function(d) { return xF(d.x); })
+    .attr("y",function(d) { return y(d.y0+d.y); })
+    .attr("height",function(d) { return y(d.y0) - y(d.y + d.y0);})
+    .attr("width",(xF(layers[0][1].x)-xF(layers[0][0].x))/step);
+   
+
+    
+    
+
+    /*.on("mouseover",function(){
+      d3.select(this).attr("opacity",0.8)})
+    .on("mouseout",function(){
+      d3.select(this).attr("opacity",0.3)});
+*/
+    /*
+
+var focus=svg.append("g")
+          .attr("class","focus")
+          .attr("transform","translate("+margin+","+(height2)+")");
+
+focus.selectAll(".layer")
+    .data(layers)
+  .enter().append("path")
+    .attr("class","areaF")
+    .attr("d", areaF)
+    .style("fill",function(d,i){return colorCategory(category[i])})
+    .attr("opacity",0.3)
+    .on("mouseover",function(){
+      d3.select(this).attr("opacity",0.8)})
+    .on("mouseout",function(){
+      d3.select(this).attr("opacity",0.3)});
+*/
+
+focus.append("g")
+      .attr("class", "xFAxis")
+      .attr("transform", "translate(0,"+(height+5)+" )")
+      .call(xFAxis);
+
+focus.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", "translate(0,0)")
+      .call(yAxis);
+
+/*svg.append("g")
+    .attr("class","axis-y")
+    .attr("transform","translate("+margin+","+margin+")")
+    .call(yAxis)
+*/
+context.append("g")
+      .attr("class", "xCAxis")
+      .attr("transform", "translate(0, 0)")
+      .call(xCAxis);
+
+
+/*
+  context.selectAll("path")
+    .data(layers)
+  .enter().append("path")
+    .attr("class","areaC")
+    .attr("d", areaC)
+    .style("fill",function(d,i){return colorCategory(category[i])})
+    .attr("opacity",0.3)
+*/
+ context.append("g")
+      .attr("class", "x brush")
+      .call(brush)
+    .selectAll("rect")
+      .attr("y", -margin/2)
+      .attr("height", margin);
+
+  
+
+
+
+
+});
+}
+
+
+function brushed() {
+  xF.domain(brush.empty() ? xC.domain() : brush.extent());
+
+  focus.selectAll(".rect")
+      .attr("x", function(d) { return xF(d.x); })
+      .attr("y", function(d) { return y(d.y + d.y0); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("width",(xF(layers[0][1].x)-xF(layers[0][0].x))/step);
+
+
+  focus.select(".xFAxis").call(xFAxis);
+}
+
+function resetBrush() {
+d3.selectAll(".brush").call(brush.clear()) ;
+brushed();
+}
+
+function day(){
+  step=4;
+  timeSelector="day";
+  d3.selectAll(".layer").remove();
+  d3.selectAll('.xCAxis').remove();
+  d3.selectAll('.xFAxis').remove();
+  d3.selectAll('.yAxis').remove();
+  resetBrush();
+  display();
+}
+
+function week(){
+  timeSelector="week";
+  step=8;
+  d3.selectAll(".layer").remove();
+  d3.selectAll('.xCAxis').remove();
+  d3.selectAll('.xFAxis').remove();
+  d3.selectAll('.yAxis').remove();
+  resetBrush();
+  display();
+}
+
+function month(){
+  step=1.2;
+  timeSelector="month";
+  d3.selectAll(".layer").remove();
+  d3.selectAll('.xCAxis').remove();
+  d3.selectAll('.xFAxis').remove();
+  d3.selectAll('.yAxis').remove();
+  resetBrush();
+  display();
+}
+
+
+
+
+
+
+
+</script>
