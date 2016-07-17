@@ -12,6 +12,7 @@ class FilterWordsPipeline(object):
     words_to_rank_update = ['established','establishes','program','new','laboratory','lab','founded','next']
     words_to_rank_partner = ['microsoft','google','boeing','hku','acm','ibm','ieee','amway','solomon','robocup','webex','cuhk','ucla','stanford','tsinghua']
     words_to_rank_contest = ['contest','compete','competition','win','award','team']
+    words_to_remove = ['and',',','.',';','(',')','?','the','at','in','on','if','with','is','to','from','of','-','by','and','for']
     
 
     def process_item(self, item, spider):
@@ -26,11 +27,11 @@ class FilterWordsPipeline(object):
         contest_count = 0
         tokens = nltk.word_tokenize(item['lenArticle'])
 ##        tokens = sorted(w for w in set(tokens) if len(w) > 1)
-        item['lenArticle'] = len(tokens)
-        fdist = nltk.FreqDist(tokens)
-        item['fdist'] = fdist.most_common(50)
+        
         for word in tokens:
             word = word.lower()
+            if word in self.words_to_remove:
+                tokens.remove(word)
             if word in self.words_to_rank_success:
                 success_count += 1
             if word in self.words_to_rank_tech:
@@ -41,7 +42,10 @@ class FilterWordsPipeline(object):
                 partner_count += 1
             if word in self.words_to_rank_contest:
                 contest_count += 1
-
+                
+        item['lenArticle'] = len(tokens)
+        fdist = nltk.FreqDist(tokens)
+        item['fdist'] = fdist.most_common(50)
         item['topic'] = {'success':success_count,'technology':tech_count,'update':update_count,'partner':partner_count,'contest':contest_count}
         return item
         """Look at the following commented out code, use a similar loop structure and """
