@@ -1,0 +1,48 @@
+
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+  background-color: #fafafa;
+}
+
+
+
+
+
+.xFAxis path,
+.xFAxis line,
+.yAxis path,
+.yAxis line{
+  fill: none;
+  stroke: #333;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.xCAxis path,
+.xCAxis line{
+  fill:none;
+  stroke: #82cfbb;
+  stroke-width: 4px;
+  shape-rendering:crispEdges;
+}
+
+
+
+.brush .extent {
+  stroke: #fff;
+  stroke-width:3px;
+  fill:#879dff;
+  opacity: .25;
+  shape-rendering: crispEdges;
+}
+
+#timeShow{
+  position: absolute;
+  left:500px;
+  top:20px;
+}
+

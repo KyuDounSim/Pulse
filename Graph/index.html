@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>stacked bar chart of hkust pulse</title>
+
+<head>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div id="title">
+    <h2>time selector</h2>
+  </div>
+  <p>I wish a bar stands for
+  <button onclick="day()">a day</button> &nbsp 
+  <button onclick="week()">a week</button> &nbsp 
+  <button onclick="month()">a month</button> </p>
+  <button onclick="resetBrush()">Clear Brush</button>
+
+  <div id="timeShow"> 
+start time: <span id="startTime"></span>
+<br/>
+<br/>
+end time: <span id="endTime"></span>
+</div>
+
+<div id="axis"></div>
+<div id="themeRiver"></div>
+<div id="stack"></div>
+<div id="pie"></div>  
+<div id="word"></div>
+
+</body>
+<script type="text"></script>
+<script type="text/javascript " src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript " src="moment.js"></script>
+<script type="text/javascript " src="stack.js"></script>
+<script type="text/javascript " src="pie.js"></script>
+<script type="text/javascript " src="word.js"></script>
+
