@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>pie chart for hkust pulse</title>
+<style>
+.xAxis path,
+.xAxis line{
+	fill:none;
+	stroke: #82cfbb;
+	stroke-width: 4px;
+	shape-rendering:crispEdges;
+}
+
+.brush .extent{
+	fill:#9ccfb9;
+	opacity: 0.4;
+
+}
+#timeShow{
+	position: absolute;
+	left:100px;
+	top:40px;
+}
+
+</style>
+
+<body>
+<div id="timeShow"> 
+start time: <span id="startTime">start time:</span>
+<br/>
+<br/>
+end time: <span id="endTime">end time:</span>
+</div>
+
+
+</body>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="moment.js"></script>
+
+<script>
+
+var width = 960,
+    height = 400,
+    maxRadius=150,
+    minRadius=50,
+    brushH=20,
+    margin=50
+
+var color=d3.scale.ordinal()
+		 .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345','#a31eff','#b2ff69']);
+
+var x=d3.time.scale()
+      .range([0,width/2])
+
+var xAxis=d3.svg.axis()
+      .scale(x)
+      .orient("top")
+
+var r=d3.scale.linear()
+       .range([minRadius, maxRadius])
+
+var svg=d3.select("body").append("svg")
+       .attr("width",width+2*margin)
+       .attr("height", height+2*margin)
+
+svg.append("defs").append("clipPath")
+	.attr("class","clip")
+	.append("rect")
+	.attr("width",width)
+	.attr("height",height)
+
+
+var show=svg.append("g")
+		.attr("class","pie")
+		.attr("transform","translate("+(width/2+margin)+","+(height/2+margin)+")")
+
+var selector=svg.append("g")
+		.attr("class","selector")
+		.attr("transform","translate("+(width/4+margin)+","+margin+")")
+
+var pie=d3.layout.pie()
+		.value(function(d){return d.values})
+		.padAngle(0.02)
+
+var arc=d3.svg.arc()
+		.innerRadius(0)
+
+var parseDate=d3.time.format("%Y-%m-%d").parse
+
+
+d3.json("cseAll.json",function(error, data){
+	if(error)
+	throw error;
+
+data.forEach(function(d){d.date=parseDate(d.date)});
+
+
+
+// var month=data.map(function(d){ 
+// 	return {date:moment(d.date,"YYYY-MM-DD").format("YYYY-MM"),
+// 			category:d.category
+
+// 	}})
+
+// var numberOfMonth=d3.nest()
+// 				.key(function(d){return d.date})
+// 				.sortKeys(d3.ascending)
+// 				.rollup(function(leaves){return leaves.length})
+// 				.entries(month)
+
+r.domain([0, data.length])
+
+
+var orderByCategory=d3.nest()
+                    .key(function(d){return d.category})
+                    .rollup(function(d){return d.length})
+                    .entries(data)
+
+var categoryList=orderByCategory.map(function(d){return d.key})
+
+color.domain(categoryList)
+
+x.domain(d3.extent(data.map(function(d){return d.date})))
+
+
+d3.select("#startTime").html(moment(x.domain()[0]).format("YYYY-MMM-DD"));
+d3.select("#endTime").html(moment(x.domain()[1]).format("YYYY-MMM-DD"))
+
+var brush=d3.svg.brush()
+		.on("brush",brushed)
+		.x(x)
+
+// var nestMonth=d3.nest()
+//              .key(function(d){return d.date}).sortKeys(d3.ascending)
+//              .key(function(d){return d.category}).sortKeys(d3.ascending)
+//              .rollup(function(d){return d.length})
+//              .entries(month)
+
+var labelBoxes = svg.selectAll(".label")
+        .data(orderByCategory)
+        .enter()
+        .append("g")
+        .attr("class","label");
+
+var labelRect = labelBoxes.append("rect")
+        .attr("x",20+margin)
+        .attr("y",function(d,index){
+            return margin*2+20+index*30;
+        })
+        .attr("width",20)
+        .attr("height",20)
+        .attr("fill",function(d){
+            if(d == "Unknow") return "#999";
+            return color(d.key);
+        })
+        .attr("opacity",0.4);
+var labelText = labelBoxes.append("text")
+        .text(function(d){
+            return d.key;
+        })
+        .style("fill","#666")
+        .attr("x", 60+margin)
+        .attr("y",function(d,index){
+            return margin*2+35+index*30;
+        });
+
+
+
+selector.append("g")
+	.attr("class","xAxis")
+	.call(xAxis)
+
+selector.append("g")
+	.attr("class","brush")
+	.call(brush)
+	.selectAll("rect")
+	.attr("height",brushH)
+	.attr("y",-brushH/2)
+
+arc.outerRadius(r(data.length))
+
+show.selectAll(".arc")
+	.data(pie(orderByCategory))
+	.enter()
+	.append("g")
+	.attr("class","arc")
+	.append("path")
+	.attr("d",arc)
+	.attr("fill",function(d){return color(d.data.key)})
+	.attr("opacity",0.3)
+
+function brushed(){
+  var filter=[]
+  for (var i =data.length - 1; i >= 0; i--) {
+  if(moment(data[i].date).unix()>moment(brush.extent()[0]).unix()&&
+  	moment(data[i].date).unix()<moment(brush.extent()[1]).unix())
+  	filter.push(data[i])
+    };
+	
+	orderByCategory=d3.nest()
+                    .key(function(d){return d.category})
+                    .rollup(function(d){return d.length})
+                    .entries(filter)
+
+    console.log(orderByCategory)
+
+    arc.outerRadius(r(filter.length))
+
+    show.selectAll("path").remove()
+
+    show.selectAll("path")
+    .data(pie(orderByCategory))
+    .enter()
+    .append("path")
+	.attr("d",arc)
+	.attr("fill",function(d){return color(d.data.key)})
+	.attr("opacity",0.3)
+	
+	d3.select("#startTime").html(moment(brush.extent()[0]).format("YYYY-MMM-DD"));
+    d3.select("#endTime").html(moment(brush.extent()[1]).format("YYYY-MMM-DD"))
+
+
+
+	
+}
+
+
+	})
+
+
+
+
+</script>
