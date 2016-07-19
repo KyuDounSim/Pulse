@@ -27,9 +27,10 @@ body {
 
 .xCAxis path,
 .xCAxis line{
-  fill:#b7f5f0;
-  stroke-width: 10px;
-  shape-rendering: crispEdges;
+  fill:none;
+  stroke: #82cfbb;
+  stroke-width: 4px;
+  shape-rendering:crispEdges;
 }
 
 
@@ -42,22 +43,36 @@ body {
   shape-rendering: crispEdges;
 }
 
+#timeShow{
+  position: absolute;
+  left:500px;
+  top:20px;
+}
+
+
 </style>
 <body>
   <div id="title">
     <h2>time selector</h2>
   </div>
-  <p>I wish to analyze based the articles of 
+  <p>I wish a bar stands for
   <button onclick="day()">a day</button> &nbsp 
   <button onclick="week()">a week</button> &nbsp 
   <button onclick="month()">a month</button> </p>
   <button onclick="resetBrush()">Clear Brush</button>
 
-  <div id="svg">
+  <div id="timeShow"> 
+start time: <span id="startTime"></span>
+<br/>
+<br/>
+end time: <span id="endTime"></span>
+</div>
+
+  
 
 </body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="/moment.js"></script>
+<script src="moment.js"></script>
 <script>
 
 var width = 960,
@@ -72,7 +87,7 @@ var timeSelector= "day";
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
 
-var svg = d3.select("#svg").append("svg")
+var svg = d3.select("body").append("svg")
     .attr("width", width+2*margin)
     .attr("height", height+40*margin+2*height2);
 
@@ -104,7 +119,7 @@ var xFAxis = d3.svg.axis()
 
 var xCAxis=d3.svg.axis()
     .scale(xC)
-    .orient("bottom")
+    .orient("top")
     //.tickFormat(d3.time.format("%b %Y"))
 
 var yAxis = d3.svg.axis()
@@ -120,11 +135,6 @@ var focus = svg
 var context = svg.append("g")
     .attr("class", "context")
     .attr("transform", "translate(" + margin + "," + margin + ")");
-
-var areaF = d3.svg.area()
-    .x(function(d) { return xF(d.x); })
-    .y0(function(d) { return y(d.y0); })
-    .y1(function(d) { return y(d.y+d.y0); });
 
 display();
 function display(){
@@ -255,6 +265,7 @@ monthNode=monthNode.map(function(d)
 var colorCategory=d3.scale.ordinal()
             .domain(categoryList)
             .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345','#a31eff','#b2ff69']);
+            
 
 var labelBoxes = svg.selectAll(".label")
         .data(orderByCategory)
@@ -305,7 +316,7 @@ var n = orderByCategory.length, // number of category
     m = dateNode.length ;// number of samples per layer
 
 
-    stack = d3.layout.stack().offset("wiggle")
+    stack = d3.layout.stack()//.offset("wiggle")
 
     layers = stack(categoryList.map(function(c) {
     return d3.range(m).map(function(d,i) {
@@ -313,11 +324,12 @@ var n = orderByCategory.length, // number of category
     });
   }));
 
-
-
-   xF.domain(d3.extent(d3.extent(layers[0].map(function(d) { return d.x; }))))
+   xF.domain(d3.extent(layers[0].map(function(d) { return d.x; })))
     
     xC.domain(xF.domain());
+
+    d3.select("#startTime").html(moment(xF.domain()[0]).format("YYYY-MMM-DD"));
+    d3.select("#endTime").html(moment(xF.domain()[1]).format("YYYY-MMM-DD"))
 
 brush.x(xC)
 
@@ -340,19 +352,27 @@ var areaC = d3.svg.area()
     .y1(function(d) { return y(d.y+d.y0); })
 */
 
-
-focus.selectAll("path")
-    .data(layers)
-  .enter().append("path")
-  .attr("clip-path", "url(#clip)")
-    .attr("class","areaF")
-    .attr("d", areaF)
-    .style("fill",function(d,i){return colorCategory(categoryList[i])})
-    .attr("opacity",0.3)
-    .on("mouseover",function(){
+var focusLayer=focus.selectAll(".layer")
+      .data(layers)
+    .enter().append("g")
+    .attr("clip-path", "url(#clip)")
+      .attr("class", "layer")
+      .style("fill", function(d,i){return colorCategory(categoryList[i])})
+       .attr("opacity",1)
+      .on("mouseover",function(){
+        d3.select("this").attr("opacity",1)})
+       .on("mouseout",function(){
       d3.select(this).attr("opacity",0.8)})
-    .on("mouseout",function(){
-      d3.select(this).attr("opacity",0.3)});
+
+
+      focusLayer.selectAll("rect")
+      .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("class","rect")
+    .attr("x",function(d) { return xF(d.x); })
+    .attr("y",function(d) { return y(d.y0+d.y); })
+    .attr("height",function(d) { return y(d.y0) - y(d.y + d.y0);})
+    .attr("width",(xF(layers[0][1].x)-xF(layers[0][0].x))/step);
    
 
     
@@ -386,11 +406,12 @@ focus.append("g")
       .attr("class", "xFAxis")
       .attr("transform", "translate(0,"+(height+5)+" )")
       .call(xFAxis);
-/*focus.append("g")
+
+focus.append("g")
       .attr("class", "yAxis")
       .attr("transform", "translate(0,0)")
       .call(yAxis);
-*/
+
 /*svg.append("g")
     .attr("class","axis-y")
     .attr("transform","translate("+margin+","+margin+")")
@@ -430,8 +451,17 @@ context.append("g")
 function brushed() {
   xF.domain(brush.empty() ? xC.domain() : brush.extent());
 
-  focus.selectAll(".areaF").attr("d", areaF);
+  focus.selectAll(".rect")
+      .attr("x", function(d) { return xF(d.x); })
+      .attr("y", function(d) { return y(d.y + d.y0); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("width",(xF(layers[0][1].x)-xF(layers[0][0].x))/step);
+
+
   focus.select(".xFAxis").call(xFAxis);
+
+  d3.select("#startTime").html(moment(xF.domain()[0]).format("YYYY-MMM-DD"));
+    d3.select("#endTime").html(moment(xF.domain()[1]).format("YYYY-MMM-DD"))
 }
 
 function resetBrush() {
@@ -442,7 +472,7 @@ brushed();
 function day(){
   step=4;
   timeSelector="day";
-  d3.selectAll("path").remove();
+  d3.selectAll(".layer").remove();
   d3.selectAll('.xCAxis').remove();
   d3.selectAll('.xFAxis').remove();
   d3.selectAll('.yAxis').remove();
@@ -453,7 +483,7 @@ function day(){
 function week(){
   timeSelector="week";
   step=8;
-  d3.selectAll("path").remove();
+  d3.selectAll(".layer").remove();
   d3.selectAll('.xCAxis').remove();
   d3.selectAll('.xFAxis').remove();
   d3.selectAll('.yAxis').remove();
@@ -464,7 +494,7 @@ function week(){
 function month(){
   step=1.2;
   timeSelector="month";
-  d3.selectAll("path").remove();
+  d3.selectAll(".layer").remove();
   d3.selectAll('.xCAxis').remove();
   d3.selectAll('.xFAxis').remove();
   d3.selectAll('.yAxis').remove();

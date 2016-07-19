@@ -1,0 +1,566 @@
+[
+  {
+    "_id": "577bb30cda3646a3bde8b488",
+    "date": 5,
+    "importanceFactor": 18,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c53cb7d7b1ff02505",
+    "date": 1,
+    "importanceFactor": 30,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c6a0d1ef70a08d6df",
+    "date": 21,
+    "importanceFactor": 17,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30cb974a636c5320357",
+    "date": 3,
+    "importanceFactor": 16,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c4f22ed870785e8ea",
+    "date": 26,
+    "importanceFactor": 17,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cfbc7c91a009f7c79",
+    "date": 20,
+    "importanceFactor": 15,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c268ca908f9176ec6",
+    "date": 19,
+    "importanceFactor": 2,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30ceb0ed14c1bd41ef2",
+    "date": 23,
+    "importanceFactor": 11,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30ca91ae91412533f81",
+    "date": 2,
+    "importanceFactor": 4,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c02183de3fbbe27b2",
+    "date": 18,
+    "importanceFactor": 29,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30ca9c8084fe33f7abb",
+    "date": 6,
+    "importanceFactor": 30,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c3300942ba176316a",
+    "date": 10,
+    "importanceFactor": 1,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c5d39d461a6d8ec15",
+    "date": 30,
+    "importanceFactor": 7,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cceb584114970e985",
+    "date": 11,
+    "importanceFactor": 27,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cae7e96f30ae93e28",
+    "date": 19,
+    "importanceFactor": 0,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30ce4760c04e8405dce",
+    "date": 19,
+    "importanceFactor": 15,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30cd12f2a072a4ae243",
+    "date": 7,
+    "importanceFactor": 12,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30ca4511db4eb1d9d95",
+    "date": 3,
+    "importanceFactor": 8,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cddfab398b1258096",
+    "date": 16,
+    "importanceFactor": 30,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c0e9f91d5fce39342",
+    "date": 14,
+    "importanceFactor": 8,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c9b50e63e27fd773b",
+    "date": 0,
+    "importanceFactor": 25,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c667bae154b24d147",
+    "date": 30,
+    "importanceFactor": 13,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c10f9df13c7a2395c",
+    "date": 8,
+    "importanceFactor": 9,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c0ef43e7e6026ff2b",
+    "date": 14,
+    "importanceFactor": 10,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30ca5ff2a46a67e5ea3",
+    "date": 1,
+    "importanceFactor": 0,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c914490c3461988b7",
+    "date": 9,
+    "importanceFactor": 15,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c49003f80d63013c4",
+    "date": 12,
+    "importanceFactor": 27,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c5c4570b56b68684a",
+    "date": 29,
+    "importanceFactor": 25,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cc9c3b49665b78305",
+    "date": 0,
+    "importanceFactor": 6,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30cf8e98a9db1c90f02",
+    "date": 25,
+    "importanceFactor": 4,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30ce4ef91880ebab7e1",
+    "date": 28,
+    "importanceFactor": 9,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c0e3ca07339a6afae",
+    "date": 13,
+    "importanceFactor": 2,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c1d8d6cfa6a36ccff",
+    "date": 21,
+    "importanceFactor": 19,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c850fdc8bbc4a9b7b",
+    "date": 16,
+    "importanceFactor": 14,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30ce1288e637b6d61b1",
+    "date": 2,
+    "importanceFactor": 14,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c6bdcd841f076aa9f",
+    "date": 3,
+    "importanceFactor": 20,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c0b5ed02eafcdce30",
+    "date": 22,
+    "importanceFactor": 5,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c47225ed868e73535",
+    "date": 29,
+    "importanceFactor": 18,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cef7bf86e3e5c5385",
+    "date": 10,
+    "importanceFactor": 14,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30cde04539648d4941e",
+    "date": 8,
+    "importanceFactor": 13,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cd98516637e48c2e6",
+    "date": 2,
+    "importanceFactor": 13,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30ce428d6e5bc8c5a18",
+    "date": 16,
+    "importanceFactor": 26,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cac7108b9bdc11901",
+    "date": 3,
+    "importanceFactor": 26,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cee8029370641bc4e",
+    "date": 11,
+    "importanceFactor": 15,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c4c4c5cbf901ee21e",
+    "date": 1,
+    "importanceFactor": 12,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c8c8d21d7a139998c",
+    "date": 23,
+    "importanceFactor": 24,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c2b27c8acb69fc014",
+    "date": 20,
+    "importanceFactor": 8,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c48a20d0e694c570c",
+    "date": 15,
+    "importanceFactor": 30,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30ce77d5d44e736eb14",
+    "date": 8,
+    "importanceFactor": 4,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cbccc3b0c95178b44",
+    "date": 15,
+    "importanceFactor": 8,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c95848e3773bbbd4d",
+    "date": 6,
+    "importanceFactor": 1,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c618abc8665117658",
+    "date": 28,
+    "importanceFactor": 3,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cc926510f0bfc9207",
+    "date": 19,
+    "importanceFactor": 17,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c5346dcb0a132ba25",
+    "date": 0,
+    "importanceFactor": 4,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c6b619dd9ef84720e",
+    "date": 11,
+    "importanceFactor": 1,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c71ce8e73fdde5058",
+    "date": 19,
+    "importanceFactor": 29,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30cb094d76010fc1f7e",
+    "date": 4,
+    "importanceFactor": 15,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c6eff5be3b7240d38",
+    "date": 17,
+    "importanceFactor": 29,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c7480f02a8908ceaa",
+    "date": 12,
+    "importanceFactor": 5,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c41c5bebac2fb7c51",
+    "date": 20,
+    "importanceFactor": 10,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c252286ec72bde627",
+    "date": 10,
+    "importanceFactor": 1,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c84107503853271c3",
+    "date": 21,
+    "importanceFactor": 2,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30ca6bebe4d0b5df4d5",
+    "date": 28,
+    "importanceFactor": 19,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30ccd8fc0101ff142b4",
+    "date": 27,
+    "importanceFactor": 8,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c9e190be066c64404",
+    "date": 25,
+    "importanceFactor": 7,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cb17d41808f2ae104",
+    "date": 5,
+    "importanceFactor": 7,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c8af4a95eeee283b8",
+    "date": 3,
+    "importanceFactor": 12,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c68fa3acc111cb59a",
+    "date": 12,
+    "importanceFactor": 6,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c2727a55448a292e6",
+    "date": 18,
+    "importanceFactor": 0,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30caab13101a9b59e90",
+    "date": 5,
+    "importanceFactor": 27,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c66bac7617832ed45",
+    "date": 27,
+    "importanceFactor": 26,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c1e87dd2a0d298c72",
+    "date": 8,
+    "importanceFactor": 0,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c8991306bf77418a0",
+    "date": 28,
+    "importanceFactor": 10,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cb7bfbd3ff5170e38",
+    "date": 20,
+    "importanceFactor": 3,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c72f172956ae9601f",
+    "date": 1,
+    "importanceFactor": 2,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c83315339868c36a9",
+    "date": 5,
+    "importanceFactor": 0,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30ca5db3581f65e61ec",
+    "date": 19,
+    "importanceFactor": 26,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cee02db0944ec8c5d",
+    "date": 15,
+    "importanceFactor": 0,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c891fc20bc209102f",
+    "date": 8,
+    "importanceFactor": 14,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c1bbfea1e37e2779f",
+    "date": 23,
+    "importanceFactor": 18,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c605ac7173bd3fdaa",
+    "date": 28,
+    "importanceFactor": 17,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30cf4f589a90350a181",
+    "date": 0,
+    "importanceFactor": 24,
+    "category": "event"
+  },
+  {
+    "_id": "577bb30c544ae9d3ad9fc5c0",
+    "date": 16,
+    "importanceFactor": 23,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c676e84dbaf4dd031",
+    "date": 16,
+    "importanceFactor": 13,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30cfc5783974d51d62a",
+    "date": 28,
+    "importanceFactor": 19,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c3f151b86d2a25de9",
+    "date": 18,
+    "importanceFactor": 17,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c4f79b66917ad8d78",
+    "date": 17,
+    "importanceFactor": 11,
+    "category": "news"
+  },
+  {
+    "_id": "577bb30c966d30f69bd85130",
+    "date": 15,
+    "importanceFactor": 20,
+    "category": "achievement"
+  },
+  {
+    "_id": "577bb30c11981019469f2489",
+    "date": 0,
+    "importanceFactor": 17,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cbf32d84580368559",
+    "date": 7,
+    "importanceFactor": 0,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cf88a580050515656",
+    "date": 23,
+    "importanceFactor": 3,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c828e1b8dc9ffd3a2",
+    "date": 30,
+    "importanceFactor": 27,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30c396dbf0ba17fc4f9",
+    "date": 22,
+    "importanceFactor": 23,
+    "category": "thesisDefence"
+  },
+  {
+    "_id": "577bb30cf11d6a6e4228e3ca",
+    "date": 21,
+    "importanceFactor": 30,
+    "category": "thesisDefence"
+  }
+]
