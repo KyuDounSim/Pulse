@@ -46,16 +46,20 @@ var width = 960,
     brushH=20,
     margin=50
 
+
+//a color for a category
 var color=d3.scale.ordinal()
 		 .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345','#a31eff','#b2ff69']);
 
+
+//axis in the time brush
 var x=d3.time.scale()
       .range([0,width/2])
 
 var xAxis=d3.svg.axis()
       .scale(x)
       .orient("top")
-
+//a r scaler 
 var r=d3.scale.linear()
        .range([minRadius, maxRadius])
 
@@ -69,21 +73,28 @@ svg.append("defs").append("clipPath")
 	.attr("width",width)
 	.attr("height",height)
 
-
+//append a group in the svg for the pie chart
 var show=svg.append("g")
 		.attr("class","pie")
 		.attr("transform","translate("+(width/2+margin)+","+(height/2+margin)+")")
 
+//append a group in the svg for the time brush
 var selector=svg.append("g")
 		.attr("class","selector")
 		.attr("transform","translate("+(width/4+margin)+","+margin+")")
+
+//define pie layout
 
 var pie=d3.layout.pie()
 		.value(function(d){return d.values})
 		.padAngle(0.02)
 
+//an path generator for arc
+
 var arc=d3.svg.arc()
 		.innerRadius(0)
+
+//change the format of time
 
 var parseDate=d3.time.format("%Y-%m-%d").parse
 
@@ -94,19 +105,6 @@ d3.json("cseAll.json",function(error, data){
 
 data.forEach(function(d){d.date=parseDate(d.date)});
 
-
-
-// var month=data.map(function(d){ 
-// 	return {date:moment(d.date,"YYYY-MM-DD").format("YYYY-MM"),
-// 			category:d.category
-
-// 	}})
-
-// var numberOfMonth=d3.nest()
-// 				.key(function(d){return d.date})
-// 				.sortKeys(d3.ascending)
-// 				.rollup(function(leaves){return leaves.length})
-// 				.entries(month)
 
 r.domain([0, data.length])
 
@@ -126,16 +124,13 @@ x.domain(d3.extent(data.map(function(d){return d.date})))
 d3.select("#startTime").html(moment(x.domain()[0]).format("YYYY-MMM-DD"));
 d3.select("#endTime").html(moment(x.domain()[1]).format("YYYY-MMM-DD"))
 
+
 var brush=d3.svg.brush()
 		.on("brush",brushed)
 		.x(x)
 
-// var nestMonth=d3.nest()
-//              .key(function(d){return d.date}).sortKeys(d3.ascending)
-//              .key(function(d){return d.category}).sortKeys(d3.ascending)
-//              .rollup(function(d){return d.length})
-//              .entries(month)
 
+//draw the label
 var labelBoxes = svg.selectAll(".label")
         .data(orderByCategory)
         .enter()
@@ -164,12 +159,12 @@ var labelText = labelBoxes.append("text")
             return margin*2+35+index*30;
         });
 
-
+//add x axis for the time brush
 
 selector.append("g")
 	.attr("class","xAxis")
 	.call(xAxis)
-
+//call brush in the time brush
 selector.append("g")
 	.attr("class","brush")
 	.call(brush)
@@ -179,6 +174,7 @@ selector.append("g")
 
 arc.outerRadius(r(data.length))
 
+//draw pie chart
 show.selectAll(".arc")
 	.data(pie(orderByCategory))
 	.enter()
