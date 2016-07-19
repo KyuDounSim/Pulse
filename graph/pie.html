@@ -202,8 +202,6 @@ function brushed(){
                     .rollup(function(d){return d.length})
                     .entries(filter)
 
-    console.log(orderByCategory)
-
     arc.outerRadius(r(filter.length))
 
     show.selectAll("path").remove()
