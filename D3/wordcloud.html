@@ -24,10 +24,24 @@
 
 </body>
 <script>
-    var hope;
+    function merge(fdist1,fdist2){
+        var newDist = [];
+        var oh = {};
+        for (int i = 0; i<fdist1.length; i++){
+            for (int j=0; j<fdist2.length; j++){
+                if (fdist1[i].text == fdist2[j].text){
+                    oh["text"] = fdist1[i].text;
+                    oh['size'] = fdist1[i].size + fdist2[j].size;
+                    newDist.push(oh);
+                }
+                else{
+                    //Figure out a way to handle the else case without repeating
+                }
+            }
+        }
+    }
     function extract(item,index){
         var cur = item.fdist;
-        var oh = {};
         var ah= [];
         for (var i = 0; i<cur.length; ++i){
                 ah[i] = {"text":cur[i][0],"size":cur[i][1]*10};
@@ -37,8 +51,8 @@
     d3.json("../Crawler/current.json",function(error,graph){
         graph.forEach(extract);
 //        console.log(graph[0].fdist);
-        hope = graph[10].fdist;
-        console.log(graph[0].fdist);
+        var hope = graph[10].fdist;
+//        console.log(graph[0].fdist);
         var color = d3.scale.linear()
             .domain([0,1,2,3,4,5,6,10,15,20,100])
             .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
@@ -49,9 +63,6 @@
                 .fontSize(function(d) { return d.size; })
                 .on("end", draw)
                 .start();
-        
-//        wordCloud.words(hope);
-//        console.log(wordCloud.words(hope));
 
         function draw(words) {
             d3.select("body").append("svg")
