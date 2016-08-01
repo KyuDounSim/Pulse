@@ -24,7 +24,11 @@ class DmozSpider(Spider):
 
     def parse_news(self, response):
     	#log.msg('parse(%s)' % response.url, level = log.DEBUG)
+    	
+    	# I need to check if the rows are properly "parseing" the table content.
     	rows = response.xpath('//div[@class="subbody-left"]/table/tbody/tr')
+    	
+    	# The following the "For" loop does not work
     	for row in rows:
             item = Website()
             item['category'] = 'News'

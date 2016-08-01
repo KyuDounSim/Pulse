@@ -1,0 +1,2 @@
+dmoz.py inside the folder needs to be fixed. I will be working on this, but honestly I don't know how this works
+Inside dmoz.py, the for loop does not work. So I am expecting that rows is wrong.
