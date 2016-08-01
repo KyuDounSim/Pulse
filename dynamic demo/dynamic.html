@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>theme river of hkust pulse</title>
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+  background-color: #fafafa;
+}
+
+
+
+
+
+.xFAxis path,
+.xFAxis line
+{
+  fill: none;
+  stroke: #666;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.yAxis path,
+.yAxis line{
+  fill: none;
+  stroke:#ccc;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.yAxis .tick text{
+  display: none
+}
+
+.yAxis .tick line{
+opacity: 0.2; 
+}
+
+.xCAxis path,
+.xCAxis line{
+  fill:none;
+  stroke: #82cfbb;
+  stroke-width: 4px;
+  shape-rendering:crispEdges;
+}
+
+#timeShow{
+  position: absolute;
+  left:50px;
+  top:20px;
+}
+
+button{
+  position: right;
+}
+
+.brush.extent{
+  /*stroke: #879dff;
+  stroke-width:30px;*/
+ fill-color:#879dff;
+  opacity: .25;
+}
+
+#timeBar{
+  position: absolute;
+  top:190px;
+
+}
+
+#themeRiver{
+  position: absolute;
+  top:250px;
+
+}
+
+#pie{
+  position: absolute;
+  right:-145px;
+  top:200px;
+
+}
+
+#label{
+  position: absolute;
+  top:20px;
+  right:20px;
+}
+
+</style>
+<body>
+  <div id="timeShow">
+start time: <span id="startTime"></span>
+<br/>
+<br/>
+end time: <span id="endTime"></span>
+<br/>
+<br/>
+  <button onclick="stopTransition()">stop</button>
+</div>
+<div id="label"></div>
+<div id="timeBar"></div>
+  <div id="themeRiver"></div>
+<div id="pie"></div>
+
+
+</body>
+<script src="http://d3js.org/d3.v4.0.0-alpha.49.min.js"></script>
+<script src="moment.js"></script>
+<script>
+
+const width = 960,
+    height = 400,
+    height2=20,
+    widthT=700,
+    widthP=400,
+    minRadius=30,
+    maxRadius=150
+
+    margin=50;
+
+var step=1.2;
+
+
+var parseDate = d3.timeParse("%Y-%m-%d");
+
+var svgBar=d3.select("#timeBar").append("svg")
+    .attr("width", width+margin*2)
+    .attr("height", height2*3);
+
+var svgRiver = d3.select("#themeRiver").append("svg")
+    .attr("width", widthT)
+    .attr("height", height+height2+margin);
+
+
+    svgRiver.append("defs").append("clipPath")
+    .attr("id", "clip")
+  .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+        
+var svgPie=d3.select("#pie").append("svg")
+       .attr("width",widthP)
+       .attr("height", height+margin)
+
+svgPie.append("defs").append("clipPath")
+  .attr("class","clip")
+  .append("rect")
+  .attr("width",width)
+  .attr("height",height)
+
+
+var xF = d3.scaleTime()
+    .range([0, widthT]);
+
+var xC=d3.scaleTime()
+           .range([0,width]);
+
+var r=d3.scaleLinear()
+       .range([minRadius, maxRadius])
+
+var y = d3.scaleLinear()
+    .range([height, 0])
+    .nice();
+
+var xFAxis = d3.axisBottom()
+    .scale(xF)
+    .tickFormat(d3.timeFormat("%Y,%b"))
+    
+   
+var xCAxis=d3.axisTop()
+    .scale(xC)
+    
+    
+
+var yAxis = d3.axisLeft()
+    .scale(y)
+    .ticks(5)
+    .tickSizeInner(-widthT);
+
+var focus = svgRiver
+    .append("g")
+    .attr("class","focus")
+    .attr("transform","translate("+margin+","+(height2)+")");
+
+var timeBar = svgBar.append("g")
+    .attr("class", "timeBar")
+    .attr("transform", "translate(" + margin + "," + margin + ")");
+
+var contextBrush= timeBar.append("g")
+      .attr("transform","translate(0,"+(-height2)+")")
+      .attr("class", "xBrush")
+
+var areaF = d3.area()
+    .curve(d3.curveBasis)
+    .x(function(d) {return xF(d.data.date); })
+    .y0(function(d) {return y(d[0]); })
+    .y1(function(d) { return y(d[1]); });
+
+
+//append a group in the svg for the pie chart
+var pieGraph=svgPie.append("g")
+    .attr("class","pie")
+    .attr("transform","translate("+maxRadius+","+(height/2+margin)+")")
+
+
+//define pie layout
+
+var pie=d3.pie()
+    .value(function(d){return d.value})
+    .padAngle(0.02)
+    .sort(d3.ascending)
+
+//an path generator for arc
+
+var arc=d3.arc()
+    .innerRadius(0)
+
+
+
+d3.json("cseAll.json",function(error,data){
+
+if (error) throw error;
+
+r.domain([0, data.length]);
+arc.outerRadius(r(data.length));
+
+var orderByCategory=d3.nest()
+                      .key(function(d){return d.category}).sortKeys(d3.ascending)
+                      .rollup(function(leaves){return leaves.length})
+                      .entries(data)
+
+
+var orderByDate=d3.nest()
+                    .key(function(d){return d.date}).sortKeys(d3.ascending)
+                    .rollup(function(leaves){return leaves.length})
+                     .entries(data)
+
+var orderByDateByCategory=d3.nest()
+                .key(function(d){return d.date}).sortKeys(d3.ascending)
+                .key(function(d){return d.category}).sortKeys(d3.ascending)
+                .rollup(function(leaves){return leaves.length;})
+                .entries(data);
+
+var categoryList=d3.set(orderByCategory.map(function(d){return d.key})).values().sort(d3.ascending);
+
+var numberOfAchievement=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfEvent=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfNews=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfThesisDefence=d3.range(orderByDate.length).map(function(){return 0});
+  var numberOfSeminar=d3.range(orderByDate.length).map(function(){return 0})
+
+var dayNode=d3.range(orderByDate.length).map(function(d,i){
+                  var category=orderByDateByCategory[i].values;
+                  
+                  for (var n =0; n <= category.length - 1; n++) {
+                    switch(category[n].key){
+                      case "News":
+                      numberOfNews[i]=category[n].value;
+                      break;
+
+                      case "Achievement":
+                      numberOfAchievement[i]=category[n].value;
+                      break;
+
+                      case "Event":
+                      numberOfEvent[i]=category[n].value;
+                      break;
+
+                      case "ThesisDefense":
+                      numberOfThesisDefence[i]=category[n].value;
+                      break;
+
+                      case "Seminar":
+                      numberOfSeminar[i]=category[n].value;
+                      break;
+
+
+                    }
+                  }
+                   ;
+                return{date:parseDate(orderByDate[i].key),
+                       year:moment(orderByDate[i].key,"YYYY-MM-DD").year()-2002,
+                      month:moment(orderByDate[i].key,"YYYY-MM-DD").month()-6+(moment(orderByDate[i].key,"YYYY-MM-DD").year()-2002)*12,
+                       week:Math.floor((moment(orderByDate[i].key,"YYYY-MM-DD").unix()-moment(orderByDate[0].key,"YYYY-MM-DD").unix())/(60*60*24*7)),
+                       //day:moment(orderByDate[i].key,"YYYY-MM-DD").day(),
+                       numberOfArticles:orderByDate[i].value,
+                       Achievement:numberOfAchievement[i],
+                       Event:numberOfEvent[i],
+                       News:numberOfNews[i],
+                       ThesisDefense:numberOfThesisDefence[i],
+                       Seminar:numberOfSeminar[i]
+
+
+                      }
+                })
+
+// var weekNode=d3.nest()
+//             .key(function(d){return d.week})
+//             //.sortKeys(d3.ascending)
+//             .rollup(function(leaves){return{
+//               "Achievement":d3.sum(leaves,function(d){return d.Achievement;}),
+//               "Event":d3.sum(leaves,function(d){return d.Event;}),
+//               "News":d3.sum(leaves,function(d){return d.News;}),
+//               "ThesisDefense":d3.sum(leaves,function(d){return d.ThesisDefense;}),
+//               "Seminar":d3.sum(leaves,function(d){return d.Seminar;})
+//             }})
+//             .entries(dayNode)
+
+// weekNode= weekNode.map(function(d){
+//   var c=d.value;
+
+//     return {
+//       "date": parseDate(moment.unix((d.key)*60*60*24*7+moment(orderByDate[0].key,"YYYY-MM-DD").unix()).format("YYYY-MM-DD")),
+//       "Achievement": c.Achievement,
+//       "Event":c.Event,
+//       "News": c.News,
+//       "ThesisDefense": c.ThesisDefense,
+//       "Seminar":c.Seminar
+       
+//   }
+//   })
+
+
+var monthNode=d3.nest()
+            .key(function(d){return d.month})
+            //.sortKeys(d3.ascending)
+            .rollup(function(leaves){return{
+              "Achievement":d3.sum(leaves,function(d){return d.Achievement;}),
+              "Event":d3.sum(leaves,function(d){return d.Event;}),
+              "News":d3.sum(leaves,function(d){return d.News;}),
+              "ThesisDefense":d3.sum(leaves,function(d){return d.ThesisDefense;}),
+              "Seminar":d3.sum(leaves,function(d){return d.Seminar;}),
+            }})
+            .entries(dayNode)
+
+monthNode=monthNode.map(function(d)
+  {
+  var c=d.value;
+    return {
+      date: parseDate(moment(orderByDate[0].key,"YYYY-MM-DD").add(d.key,"month").format("YYYY-MM-DD")),
+      Achievement: c.Achievement,
+      Event:c.Event,
+      News: c.News,
+      ThesisDefense: c.ThesisDefense,
+      Seminar:c.Seminar   
+        }
+  })
+
+var colorCategory=d3.scaleOrdinal()
+            .domain(categoryList)
+            .range(['#5fc5aa','#5a92f2','#f084ac','#ffa345','#a31eff','#b2ff69']);
+
+//label
+var labelBoxes = d3.select("#label")
+        .append("svg")
+        .attr("weight",400)
+        .attr("width",width/2)
+        .attr("class","label")
+        .append("g")
+        .attr("transform","translate(0,-80)")
+        .selectAll(".label")
+        .data(orderByCategory)
+        .enter()
+        .append("g")
+        .attr("class","label");
+
+
+var labelRect = labelBoxes.append("rect")
+        .attr("x",20+margin)
+        .attr("y",function(d,index){
+            return margin+height2+20+index*30;
+        })
+        .attr("width",20)
+        .attr("height",20)
+        .attr("fill",function(d){
+            if(d == "Unknow") return "#999";
+            return colorCategory(d.key);
+        })
+        .attr("opacity",0.4);
+var labelText = labelBoxes.append("text")
+        .text(function(d){
+            return d.key;
+        })
+        .style("fill","#666")
+        .attr("x", 60+margin)
+        .attr("y",function(d,index){
+            return margin+height2+35+index*30;
+        });
+
+
+pieGraph.selectAll(".arc")
+  .data(pie(orderByCategory))
+  .enter()
+  .append("g")
+  .attr("class","arc")
+  .append("path")
+  .attr("d",arc)
+  .attr("fill",function(d){return colorCategory(d.data.key)})
+  .attr("opacity",0.3)
+
+//time selector
+
+var dateNode=monthNode;
+
+// switch(timeSelector){
+//   case "day":
+//   dateNode=dayNode;
+//   break;
+
+//   case "week":
+//   dateNode=weekNode;
+//   break;
+
+//   case "month":
+//   dateNode=monthNode;
+//   break;
+// }
+
+//stack
+var n = orderByCategory.length, // number of category
+    m = dateNode.length ;// number of samples per layer
+
+
+  var  stack = d3.stack().offset(d3.stackOffsetWiggle)
+              .keys(categoryList)
+  //   var layerData=categoryList.map(function(c) {
+  //   return d3.range(m).map(function(i) {
+  //    return {"x": dateNode[i].date, "y": dateNode[i][c]};
+  //   });
+  // })
+
+    var layers = stack(dateNode);
+
+   xF.domain(d3.extent(layers[0].map(function(d) {return d.data.date; })))
+
+    
+    xC.domain(xF.domain());
+
+    d3.select("#startTime").html(moment(xF.domain()[0]).format("YYYY-MMM-DD"));
+    d3.select("#endTime").html(moment(xF.domain()[1]).format("YYYY-MMM-DD"));
+
+
+
+ 
+   
+ y.domain([d3.min(layers, function(layer) { return d3.min(layer, function(d) { return Math.min(d[0],d[1]); }); }), 
+  d3.max(layers, function(layer) { return d3.max(layer, function(d) { return Math.max(d[0],d[1]); }); })])
+
+var brush=d3.brushX()
+          .on("brush",brushed)
+          .on("end",brushMove)
+          .extent([[0,0],[width,height2]]);
+
+//draw
+
+focus.selectAll("path")
+  .data(layers)
+  .enter()
+  .append("g")
+  .append("path")
+  .attr("clip-path", "url(#clip)")
+    .attr("class","areaF")
+    .attr("d", areaF)
+    .attr("fill",function(d,i){return colorCategory(categoryList[i])})
+    .attr("fill",function(d){return colorCategory(d.key)})
+  .attr("opacity",0.5)
+    .on("mouseover",function(){
+      d3.select(this).attr("opacity",0.7)})
+    .on("mouseout",function(){
+      d3.select(this).attr("opacity",0.5)})    
+   
+
+focus.append("g")
+      .attr("class", "xFAxis")
+      .attr("transform", "translate(0,"+(height+5)+" )")
+      .call(xFAxis);
+
+focus.append("g")
+      .attr("class", "yAxis")
+      .attr("transform", "translate(0,0 )")
+      .call(yAxis);
+
+//draw the time selector, an axis and a brush
+   timeBar.append("g")
+      .attr("class", "xCAxis")
+      .attr("transform", "translate(0, 0)")
+      .call(xCAxis);
+
+
+     
+      contextBrush.call(brush);
+
+
+
+
+
+function brushed() {
+  if(d3.event.selection)
+  xF.domain(d3.event.selection.map(xC.invert));
+ 
+  else
+  xF.domain(xC.domain());
+
+  focus.selectAll(".areaF").attr("d", areaF);
+  focus.select(".xFAxis").call(xFAxis);
+
+  d3.select("#startTime").html(moment(xF.domain()[0]).format("YYYY-MMM-DD"));
+    d3.select("#endTime").html(moment(xF.domain()[1]).format("YYYY-MMM-DD"))
+
+
+    var filter=[]
+  if(d3.event.selection)
+  {
+  for (var i =data.length - 1; i >= 0; i--) {
+
+  if(xC(parseDate(data[i].date))>d3.event.selection[0]&&
+    xC(parseDate(data[i].date))<d3.event.selection[1])
+    filter.push(data[i]);
+    }
+  }
+  else
+    filter=data
+
+  
+  orderByCategory=d3.nest()
+                    .key(function(d){return d.category})
+                    .rollup(function(d){return d.length})
+                    .entries(filter)
+
+    arc.outerRadius(r(filter.length))
+
+    pieGraph.selectAll("path").remove()
+
+    pieGraph.selectAll("path")
+    .data(pie(orderByCategory))
+    .enter()
+    .append("path")
+  .attr("d",arc)
+  .attr("fill",function(d){return colorCategory(d.data.key)})
+  .attr("opacity",0.3)
+}
+
+
+
+function stopTransition() {
+  console.log("1");
+
+  contextBrush
+  .call(brush.move, d3.event)
+
+}
+
+function resetBrush() {
+contextBrush.call(brush.move,null);
+brushed();
+}
+
+function brushMove(){
+
+  var domain = [width-Math.abs(d3.event.selection[0]-d3.event.selection[1]),width];
+
+    contextBrush
+    .transition()
+    .duration(20000)
+    .ease(d3.easeLinear)
+      .call(brush.move, domain)
+      .on("end", resetBrush);
+
+
+}  
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
