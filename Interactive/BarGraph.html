@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>HKUST Pulse Bar Chart</title>
+    <link rel="stylesheet" type="text/css" href="BarGraph.css">
+</head>
+<body>
+    <div id="header">
+        <h1>HKUST Pulse</h1>
+        <button type="button" onclick="showfilterbar()" id="filterbarbutton"> Show/Hide Filters</button>
+        <button type="button" onclick="showarticlebar()" id="articlebarbutton"> Show/Hide Articles</button>
+    </div>
+
+    <div id="timeSelect">
+        <h2>Time Selector: </h2>
+        <button type="button" onclick="day()">Daily</button>
+        <button type="button" onclick="week()">Weekly</button> 
+        <button type="button" onclick="month()">Monthly</button>
+        <button type="button" onclick="year()">Year</button>
+        <br>
+
+
+    </div>
+
+    <div id="timeDisplay"> 
+        <button type="button" onclick="playTime(); buttonSign()" id="playButton">&#9658;</button>
+        <button type="button" onclick="resetBrush()">Clear Brush</button>
+        <p>&nbsp <b>START: </b>
+        <span id="startTime"></span>
+        &nbsp <b>END: </b>
+        <span id="endTime"></span>
+        </p>
+
+    </div>
+
+
+    <div id="filterbar">
+        <h2>Filters</h2>
+        <button type="button" onclick="filterGo()">Go</button>
+        <ul>
+            <li id="category"><label for="category">By Category</label>
+                <ul>
+
+                    <li><input type="checkbox" id="Achievement" checked><label for="Achievement">Achievements</label></li>
+                    <li><input type="checkbox" id="Event" checked><label for="Event">Events</label></li>
+                    <li><input type="checkbox" id="News" checked><label for="News">News</label></li>
+                    <li><input type="checkbox" id="Seminar" checked><label for="Seminar">Seminars</label></li>
+                    <li><input type="checkbox" id="ThesisDefense" checked><label for="ThesisDefense">Thesis Defenses</label></li>
+                    <button type="button" onclick="selectAllCategories()">Select All</button>
+                </ul>
+            </li>
+            <li id="dept"><label for="dept">By Department</label>
+                <ul>
+                    <li><input type="checkbox" id="CBME"><label for="CBME">CBME</label></li>
+                    <li><input type="checkbox" id="CEE"><label for="CEE">CEE</label></li>
+                    <li><input type="checkbox" id="CSE" checked><label for="CSE">CSE</label></li>
+                    <li><input type="checkbox" id="ECE"><label for="ECE">ECE</label></li>
+                    <li><input type="checkbox" id="IELM"><label for="IELM">IELM</label></li>
+                    <li><input type="checkbox" id="MAE"><label for="MAE">MAE</label></li>
+                </ul>
+            </li>
+            <li id="school"><label for="school">By School</label>
+                <ul>
+                    <li><input type="checkbox" id="Science"><label for="Science">Science</label></li>
+                    <li><input type="checkbox" id="Eng"><label for="Eng">Engineering</label></li>
+                    <li><input type="checkbox" id="Hum"><label for="Hum">Humanities and Social Sciences</label></li>
+                    <li><input type="checkbox" id="Business"><label for="Business">Business and Management</label></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="listArticles">
+        <h2> ARTICLES </h2>
+        <input type="text" id="searchInput">
+        <button type="button" id="searchButton" onclick="searchList()">Search</button>
+        <h3>RESULTS</h3>
+        <div id="listResults">
+            
+        </div>
+    </div>
+    <div id="resultInfo"></div>
+<script src="http://www.d3plus.org/js/d3.js"></script>
+<script src="http://www.d3plus.org/js/d3plus.js"></script>
+<script src="http://d3js.org/d3.v4.0.0-alpha.49.min.js"></script>
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="moment.js"></script>
+    <script src="BarPieGraph.js"></script>
+    <script src="BarGraphButtons.js"></script>
+
+
+
+
+
+</body>
