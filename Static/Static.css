@@ -1,0 +1,248 @@
+/*
+    CSS for Time Selection Codes
+    Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js
+    Last Edit: Aug. 4, 2016
+*/
+body {
+    font-family: "Garamond", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: auto;
+    position: absolute;
+    width: 100%;
+    background-color: #fafafa;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 1;
+    text-align: center;
+    padding: 5px;
+    margin: 0;
+}
+
+h2 {
+    text-transform: lowercase;
+    font-variant: small-caps;
+    font-size: 28px;
+    display: inline;
+    padding: 0.25em;
+}
+
+#header {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #ccc;
+    background-color: darkgray;
+    z-index: 3;
+}
+
+#header button {
+    position: relative;
+    left: 200px;
+}
+
+/*
+#filterbarbutton {
+    position: absolute;
+    left: 200px;
+    top: 10px;
+}
+
+#articlebarbutton {
+    position: absolute;
+    top: 10px;
+    left: 325px;
+}
+*/
+
+#notes {
+    width: 500px;
+    height: 500px;
+    overflow-y: scroll;
+    display: none;
+    position: absolute;
+    top: 100px;
+    left: 200px;
+    background-color: white;
+    z-index: 10;
+}
+
+#filterbar {
+    position: fixed;
+    background: #e6e6e6;
+    height: auto;
+    width: 160px;
+    overflow-y: scroll;
+    top: 0px;
+    bottom: 0px;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s;
+    z-index: 5;
+}
+
+#filterbar ul {
+    list-style: none;
+    margin: 0;
+    padding: .3em;
+}
+
+#filterbar li {
+    padding: .1em;
+    display: block;
+
+}
+
+#filterbar li li:hover {
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+}
+
+#timePeriod {
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+}
+
+#timeFrame p {
+   margin: 0;
+}
+/*
+#timeSelect button {
+    display: inline;
+    border: 2px solid black;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 12px;
+    font-family: Arial;
+}
+*/
+
+#barChart {
+    position: absolute;
+    left: 170px;
+    top: 20px;
+    z-index: 2;
+}
+
+.xFAxis path,
+.xFAxis line,
+.yAxis path,
+.yAxis line {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+
+.xCAxis path,
+.xCAxis line{
+    fill:none;
+    stroke: #82cfbb;
+    stroke-width: 4px;
+    shape-rendering:crispEdges;
+}
+
+.brush .extent {
+    fill:#879dff;
+    opacity: .35;
+    shape-rendering: crispEdges;
+}
+
+#pieChart {
+    position: relative;
+    top: 375px;
+    left: 175px;
+    width: 400px;
+    height: 350px;
+}
+
+#listArticles {
+    float: right;
+    position: fixed;
+    background: #e6e6e6;
+    right: 0px;
+    height: auto;
+    width: 225px;
+    overflow-y: scroll;
+    top: 0px;
+    bottom: 0px;
+    list-style: none;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s;
+    z-index: 4;
+}
+
+#listArticles h3 {
+    font-family: Garamond;
+    line-height: 1;
+    font-size: 16px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+    border-bottom: 2px solid black;
+    text-align: center;
+}
+
+#listResults {
+    padding: 2px;
+    background-color: #e6e6e6;
+    position: relative;
+    height: auto;
+    border-left: 2px solid black;
+}
+
+/* class of divs -- each div = 1 result */
+.result {
+    padding: 5px;
+    position: relative;
+    border-bottom: 2px solid black;
+}
+
+.result:hover {
+    background-color: #ffffe6;
+}
+
+/* Category and Department Symbols */
+#listResults h3 {
+    border: 0;
+    margin: 2px;
+    padding: 3px;
+    display: inline;
+    opacity: 1;
+    border-radius: 10px;
+    color: white;
+    font: 14px Arial;
+}
+
+/* title */
+#listResults h4 {
+    font-size: 14px;
+    text-transform: capitalize;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+/* date keywords */
+#listResults p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+}
+
+#searchInput {
+    height: 20px;
+    font-size: 12px;
+    font-family: Arial;
+}
+
+#resultInfo {
+    display: inline-block;
+    position: absolute;
+    width: 600px;
+    height: 325px;
+    background-color: #ffffe6;
+    left: 550px;
+    top: 450px;
+    overflow-y: scroll;
+}
