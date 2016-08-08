@@ -1,0 +1,145 @@
+
+
+body {
+  margin: auto;
+  position: relative;
+  width: 960px;
+  background-color: #fafafa;
+}
+
+
+button {
+    background-color: #5a92f2; /* Green */
+    opacity: .5;
+    border: none;
+    outline:none;
+    border-radius: 15px;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    /*display: none;*/
+    font-size:18px;
+}
+
+
+.xFAxis path,
+.xFAxis line
+{
+  fill: none;
+  stroke: #666;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.yAxis path,
+.yAxis line{
+  fill: none;
+  stroke:#ccc;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.yAxis .tick text{
+  display: none
+}
+
+.yAxis .tick line{
+opacity: 0.3; 
+}
+
+.xCAxis path,
+.xCAxis line{
+  fill:none;
+  stroke: #83c0ff;
+  stroke-width: 4px;
+  shape-rendering:crispEdges;
+}
+
+#timeShow{
+  position: absolute;
+  left:450px;
+  top:40px;
+}
+
+#text{
+  font-family: 'Aref Ruqaa';
+  font-size: 20px;
+  color:#888;
+}
+
+#startTime, #endTime,#totalNumber{
+  font-family: 'Poiret One', cursive;
+  font-weight:bold;
+  font-size: 20px;
+  color:#888;
+}
+
+button{
+  position: right;
+}
+
+
+
+.background{
+  font-size: 25px;
+  /*font-family: 'Poiret One', cursive;*/
+  opacity: 0.5;
+  font-weight: bold;
+  text-align: center;
+}
+
+#themeRiver{
+  position: absolute;
+  top:200px;
+
+}
+
+#pie{
+  position: absolute;
+  right:-145px;
+  top:200px;
+
+}
+#themeRiver2{
+  position: absolute;
+  top:660px;
+
+}
+
+#pie2{
+  position: absolute;
+  right:-145px;
+  top:660px;
+
+}
+
+#departmentSelector{
+  position: absolute;
+  top:20px;
+  right:-20px;
+}
+
+.labelNumber{
+  font-family: 'Poiret One', cursive;
+  font-weight:bold;
+}
+
+#logo{
+  position: absolute;
+  top:20px;
+  left: 50px;
+  opacity: 0.4;
+  width:300px;
+  height: 200px;
+}
+#hkust{
+  position: absolute;
+  top:20px;
+  left:140px;
+  font-size: 60px;
+  color:#4CA2ff;
+  opacity: 0.6;
+  font-family: fantasy;
+}
