@@ -24,3 +24,15 @@ Crawler/crawlFromECE/dataECE.json
 Crawler/crawlFromECE/crawlFromECE.py
 
 Crawler/crawlFromCSE/crawlCSE.py
+
+*.css
+
+*.json
+
+dynamic demo3/dataECE.json
+
+dynamic demo3/dataECE.json
+
+dynamic demo3/dataECE.json
+
+dynamic demo3/dynamic3.css
