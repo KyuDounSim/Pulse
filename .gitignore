@@ -22,3 +22,5 @@ dynamic demo/dynamic.html
 Crawler/crawlFromECE/dataECE.json
 
 Crawler/crawlFromECE/crawlFromECE.py
+
+Crawler/crawlFromCSE/crawlCSE.py
