@@ -10,6 +10,10 @@ const width = 960,
 
     margin=50;
 
+var handle=0
+var n=0 //transition counter
+var stopFlag=1
+
 var step=1.2;
 var duration=1000;
 
@@ -109,10 +113,18 @@ var labelBox=svgPie.append("g")
 
 var transitionSpeed=25;
 
+ var data;
 
-d3.json("cseAll.json",function(error,data){
+$.ajax({
+  url: 'cseAll.json',
+  async: false,
+  dataType: 'json',
+  success: function (response) {
+    data=response
+  }
+});
 
-if (error) throw error;
+// if (error) throw error;
 
 
 var categoryList=d3.nest()
@@ -401,19 +413,15 @@ var totalNumber=labelBoxes.append("text")
         .attr("x",30+margin)
         .attr("y",margin+height2+35+(categoryList.length)*30)
 
-var n=0
-var handle=0
+
 handle=setInterval(function(){
   if(n<wholePeriod-12){
   transition();
  n++}
   else
-  kill()},duration*1.1)
+  stop()},duration*1.1)
 
-function kill(){
-  clearInterval();
-  handle=0;
-}
+
 
 function transition() {
 riverData=d3.range(12).map(function(d,i){
@@ -515,5 +523,28 @@ labelBoxes.selectAll(".labelNumber").remove()
 
 
 
-});
 
+
+function kill(){
+  if(stopFlag==1)
+  {
+  clearInterval(handle);
+  handle=0;
+  stopFlag=0;
+  }
+  else if(stopFlag==0){
+   handle=setInterval(function(){
+  if(n<wholePeriod-12){
+    transition();
+    n++}
+    else
+   stop()},duration*1.1)
+
+   stopFlag=1
+  }
+}
+
+function stop(){
+  stopFlag=2
+  clearInterval(handle);
+}
