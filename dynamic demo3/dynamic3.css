@@ -1,5 +1,4 @@
 
-
 body {
   margin: auto;
   position: relative;
@@ -42,7 +41,7 @@ button {
 }
 
 .yAxis .tick text{
-  display: none
+  /*display: none*/
 }
 
 .yAxis .tick line{
