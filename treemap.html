@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Treemap for hkust pulse</title>
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+</style>
+<form>
+  <label><input type="radio" name="mode" value="size" checked> Size</label>
+  <label><input type="radio" name="mode" value="count"> Count</label>
+</form>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 40, right: 10, bottom: 10, left: 10},
+    width = 1000 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+
+var format = d3.format(",d")
+
+var color = d3.scale.category20c();
+//var colorsForDepts = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f']
+
+var treemap = d3.layout.treemap()
+    .size([width, height])
+    .sticky(true)
+    .value(function(d) { return d.size; });
+
+var div = d3.select("body").append("div")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+// Gets main keywords -- requirements on minimum word length and frequency
+function getKeywords(dataObj, minWordLen, minFreq) {
+    var fdist = dataObj.fdist;
+    var keywords = [];
+    for (var i = 0; i < fdist.length; i++) {
+      if (fdist[i][1] >= minFreq && fdist[i][0].length >= minWordLen) 
+      {
+        if ( fdist[i][0]!= "Prof.")
+          keywords.push(fdist[i]);   
+      }
+    }
+    return keywords;
+}
+
+d3.json("current.json", function(error, data) {
+  	if (error) throw error;
+
+	var allCategories = ["Achievement", "Event", "News", "Seminar", "ThesisDefense"];
+  //var allDepts = ["CBME","CEE", "CSE", "ECE", "IELM", "MAE"];
+	var categoryDict = [[], [], [], [], []]
+	var tree = {"name": "allCategories", "children": []};
+	for (var i = 0; i < allCategories.length; i++) {
+		var node = {"name": allCategories[i], "children": []}
+		tree.children.push(node);
+	}
+  /*
+	for (var i = 0; i < data.length; i++) {
+		var category = data[i].category;
+		var keywords = getKeywords(data[i], 5, 8);
+		for (var j = 0; j < keywords.length; j++) {
+			
+			for (var k = 0; k < allCategories.length; k++) {
+				if (allCategories[k] == category) {
+					var index = categoryDict[k].indexOf(keywords[j][0])
+						var node= {"name": keywords[j][0], "size": keywords[j][1]};
+						tree.children[k].children.push(node);
+						categoryDict[k].push(keywords[j][0]);
+				}
+			}
+		}
+	}
+  */
+  /*
+  // takes number of articles keyword is found in
+  for (var i = 0; i < data.length; i++) {
+    var category = data[i].category;
+    var indexOfCategory = allCategories.indexOf(category)
+
+    var keywords = getKeywords(data[i], 5, 7);
+    for (var j = 0; j < keywords.length; j++) {
+      var index = categoryDict[indexOfCategory].indexOf(keywords[j][0]);
+      var max = keywords[0][1];
+      if (index == -1) {
+        var node = {"name": keywords[j][0], "size": 1};
+        tree.children[indexOfCategory].children.push(node);
+        categoryDict[indexOfCategory].push(keywords[j][0])
+      } else {
+        tree.children[indexOfCategory].children[index].size = tree.children[indexOfCategory].children[index].size + 1;
+      }
+    } 
+  }
+  */
+  // filters out keywords that appear in very few articles
+  for (var i = 0; i < data.length; i++) {
+    var category = data[i].category;
+    var indexOfCategory = allCategories.indexOf(category)
+    var keywords = getKeywords(data[i], 6,5);
+    for (var j = 0; j < keywords.length; j++) {
+      var index = Object.keys(categoryDict[indexOfCategory]).indexOf(keywords[j][0]);
+      var max = keywords[0][1];
+      if (index == -1) {
+        var keyword = keywords[j][0]
+        categoryDict[indexOfCategory][keyword] = 1;
+      } else {
+        categoryDict[indexOfCategory][keyword]++;
+      }
+    }
+  }
+  console.log(categoryDict)
+  for (var i = 0; i < categoryDict.length; i++) {
+    var keys = Object.keys(categoryDict[i]);
+    for (var j = 0; j < keys.length; j++) {
+      var keyword = keys[j]
+      //var max = Math.max.apply(Math, Object.values(categoryDict[i]));
+      //if (categoryDict[i][keyword] > 6 || (i == 1 && categoryDict[i][keyword] > 2)) {
+      if (categoryDict[i][keyword] > 4) {
+        var node = {"name": keys[j], "size": categoryDict[i][keyword]};
+        tree.children[i].children.push(node);
+      }
+    }
+  }
+  console.log(tree)
+	console.log(tree)
+
+	var node = div.datum(tree).selectAll(".node")
+      .data(treemap.nodes)
+    .enter().append("div")
+      .attr("class", "node")
+      .call(position)
+      .style("background", function(d) { return d.children ? color(d.name) : null; })
+      .text(function(d) { return d.children ? null : d.name; });
+
+/*
+  	d3.selectAll("input").on("change", function change() {
+	    var value = this.value === "count"
+	        ? function() { return 1; }
+	        : function(d) { return d.size; };
+
+	    node
+	        .data(treemap.value(value).nodes)
+	      .transition()
+	        .duration(1500)
+	        .call(position);
+	 });
+*/
+});
+
+	function position() {
+	  this.style("left", function(d) { return d.x + "px"; })
+	      .style("top", function(d) { return d.y + "px"; })
+	      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+	      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+	}
+
+</script>

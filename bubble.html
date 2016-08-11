@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>bubbles for hkust pulse</title>
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// Gets main keywords -- requirements on minimum word length and frequency
+function getKeywords(dataObj, minWordLen, minFreq) {
+    var fdist = dataObj.fdist;
+    var keywords = [];
+    for (var i = 0; i < fdist.length; i++) {
+      if (fdist[i][1] >= minFreq && fdist[i][0].length >= minWordLen) 
+      {
+        if ( fdist[i][0]!= "Prof.")
+          keywords.push(fdist[i]);   
+      }
+    }
+    return keywords;
+}
+
+
+var diameter = 960,
+    format = d3.format(",d"),
+    color = d3.scale.category10();
+    //color = ['#5fc5aa','#f084ac','#5a92f2','#ffa345','#b640f1','#808080'];
+
+
+var bubble = d3.layout.pack()
+    .sort(null)
+    .size([diameter, diameter])
+    .padding(1.5);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+    .attr("class", "bubble");
+
+d3.json("CSE.json", function(error, data) {
+  if (error) throw error;
+
+  var allCategories = ["Achievement", "Event", "News", "Seminar", "ThesisDefense"];
+  //var categoryDict = [[], [], [], [], []]
+  var categoryDict = [{}, {}, {}, {}, {}];
+  var tree = {"name": "allCategories", "children": []};
+  for (var i = 0; i < allCategories.length; i++) {
+    var node = {"name": allCategories[i], "children": []}
+    tree.children.push(node);
+  }
+  /*
+  // Takes size of each keywords
+  for (var i = 0; i < data.length; i++) {
+    var category = data[i].category;
+    var keywords = getKeywords(data[i], 5, 9);
+    for (var j = 0; j < keywords.length; j++) {
+      
+      for (var k = 0; k < allCategories.length; k++) {
+        if (allCategories[k] == category) {
+          var index = categoryDict[k].indexOf(keywords[j][0])
+            var node= {"name": keywords[j][0], "size": keywords[j][1]};
+            tree.children[k].children.push(node);
+            categoryDict[k].push(keywords[j][0]);
+        }
+      }
+    }
+  }
+  */
+
+/*
+        var node = {"name": keywords[j][0], "size": 1};
+        tree.children[indexOfCategory].children.push(node);
+        categoryDict[indexOfCategory].push(keywords[j][0])
+        tree.children[indexOfCategory].children[index].size = tree.children[indexOfCategory].children[index].size + 1;
+*/  
+// takes number of articles keyword is found in
+  for (var i = 0; i < data.length; i++) {
+    var category = data[i].category;
+    var indexOfCategory = allCategories.indexOf(category)
+    var keywords = getKeywords(data[i], 5, 4);
+    for (var j = 0; j < keywords.length; j++) {
+      var index = Object.keys(categoryDict[indexOfCategory]).indexOf(keywords[j][0]);
+      var max = keywords[0][1];
+      if (index == -1) {
+        var keyword = keywords[j][0]
+        categoryDict[indexOfCategory][keyword] = 1;
+      } else {
+        categoryDict[indexOfCategory][keyword]++;
+      }
+    }
+  }
+
+var arr = {}
+var keys = Object.keys(categoryDict[4])
+for (var i = 0; i < keys.length; i++) {
+  if (categoryDict[4][keys[i]] > 20) {
+    arr[keys[i]]=categoryDict[4][keys[i]]
+  }
+}
+
+console.log(arr)
+/*
+  for (var i = 0; i < categoryDict.length; i++) {
+    var keys = Object.keys(categoryDict[i]);
+    for (var j = 0; j < keys.length; j++) {
+      var keyword = keys[j]
+      //var max = Math.max.apply(Math, Object.values(categoryDict[i]));
+      //if (categoryDict[i][keyword] > 6 || (i == 1 && categoryDict[i][keyword] > 2)) {
+      if (categoryDict[i][keyword] > 6) {
+        var node = {"name": keys[j], "size": categoryDict[i][keyword]};
+        tree.children[i].children.push(node);
+      }
+    }
+  }
+
+
+  //console.log(tree.children[0])
+
+  var node = svg.selectAll(".node")
+      .data(bubble.nodes(classes(tree))
+      .filter(function(d) { return !d.children; }))
+    .enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  node.append("title")
+      .text(function(d) { return d.className + ": " + format(d.value); });
+
+  node.append("circle")
+      .attr("r", function(d) { return d.r; })
+      .style("fill", function(d) { return color(d.packageName); });
+
+  node.append("text")
+      .attr("dy", ".3em")
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.className.substring(0, d.r / 3); });
+*/
+});
+
+// Returns a flattened hierarchy containing all leaf nodes under the root.
+function classes(root) {
+  var classes = [];
+
+  function recurse(name, node) {
+    if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
+    else classes.push({packageName: name, className: node.name, value: node.size});
+  }
+
+  recurse(null, root);
+  //console.log(classes)
+  return {children: classes};
+
+}
+
+d3.select(self.frameElement).style("height", diameter + "px");
+
+
+</script>
