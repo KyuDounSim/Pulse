@@ -1,5 +1,6 @@
 /*
   Only Bar Chart with Time Brush
+  Created: July 21, 2016
   Last Edit: July 27, 2016
 */
 
@@ -77,7 +78,7 @@ var timeBrush = barSVG.append("g")
 display(allCategories);
 
 function display(selected) {
-  d3.json("current.json",function(error,data) {
+  d3.json("CSE.json",function(error,data) {
     if (error) throw error;
 
     // Reorder the data by Category
