@@ -1,6 +1,7 @@
 /*
 	JS for HTML Buttons with Time Brush
 	Works for StaticBar.js, StaticTimeBrush.js
+	Created July 25, 2016
 	Last Edit: August 1, 2016
 */
 
