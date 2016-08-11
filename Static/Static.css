@@ -1,7 +1,9 @@
 /*
     CSS for Time Selection Codes
-    Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js
+    Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js, StaticMoreDepts.js
+    Created: July 21, 2016
     Last Edit: Aug. 4, 2016
+
 */
 body {
     font-family: "Garamond", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -22,9 +24,11 @@ h1 {
 h2 {
     text-transform: lowercase;
     font-variant: small-caps;
-    font-size: 28px;
-    display: inline;
-    padding: 0.25em;
+    font-size: 26px;
+    display: block;
+    padding: 0px;
+    text-align: center;
+    margin: 0;
 }
 
 #header {
@@ -56,8 +60,8 @@ h2 {
 */
 
 #notes {
-    width: 500px;
-    height: 500px;
+    width: 200px;
+    height: 100px;
     overflow-y: scroll;
     display: none;
     position: absolute;
@@ -65,6 +69,9 @@ h2 {
     left: 200px;
     background-color: white;
     z-index: 10;
+    resize: both;
+    overflow-y: scroll;
+    word-wrap: normal;
 }
 
 #filterbar {
@@ -78,6 +85,13 @@ h2 {
     overflow-x: hidden; /* Disable horizontal scroll */
     transition: 0.5s;
     z-index: 5;
+}
+
+#filterbar p {
+    text-align: center;
+    margin: 0;
+    border: 0;
+    padding: 0;
 }
 
 #filterbar ul {
@@ -104,7 +118,8 @@ h2 {
 }
 
 #timeFrame p {
-   margin: 0;
+    text-align: left;
+    margin: 0;
 }
 /*
 #timeSelect button {
@@ -237,12 +252,13 @@ h2 {
 }
 
 #resultInfo {
-    display: inline-block;
+    display: inline;
     position: absolute;
     width: 600px;
-    height: 325px;
+    height: auto;
     background-color: #ffffe6;
     left: 550px;
     top: 450px;
+    z-index: 1;
     overflow-y: scroll;
 }
