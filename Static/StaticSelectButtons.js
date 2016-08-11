@@ -1,7 +1,8 @@
 /*
 	JS for HTML Buttons for Time Selection Codes
-	Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js
-	Last Edit: Aug. 4, 2016
+	Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js, StaticMoreDepts.js
+	Created: August 1, 2016
+	Last Edit: Aug. 9, 2016
 */
 
 countFilter = 0;
@@ -40,6 +41,16 @@ function showNotes() {
 		countArt ++;
 	}
 
+}
+
+function showHelp() {
+      d3.select("#resultInfo").selectAll("div").remove();
+      var help = d3.select("#resultInfo").append("div")
+      help.append("p")
+      	.text("FILTERS: Time Period Per Bar buttons declare how much time each bar stands for, i.e. either one day, one week, one month, or one year.")
+      help.append("p").text("In Time frame, select the start and end dates, and the bar/pie chart and list of articles will update accordingly.\n Distinguishing by Category means that the bar chart will be stacked based on category.  In contrast, the pie chart will show the proportion by departments.  Vice versa, distinguishing by Department means that the colors in the bar graph will be for the departments, and the pie chart will show proportion by categories.Selecting or unselecting the items under Categories and Departments filters the data that is shown.")
+      help.append("p").text("BAR GRAPH: Double clicking on one of the bars will show you the list of articles posted in during the time period represented by that bar.\n")
+      help.append("p").text("LIST OF ARTICLES\nSearch: any articles where the title or keyword has the search term will show up.  The single character is the initial of the category the article is in.  The letters next to it is the abbreviation for the department the article was posted by.");
 }
 
 function selectAllCategories() {
@@ -99,13 +110,15 @@ for (var i = 1; i <= 31; i++) {
 		.text(value)
 }
 
+var earliestDate = "2002-07-09";
+var latestDate = "2016-08-02";
+//Earliest Date: 2002-07-09 Latest Date: 2016-08-02
+  document.getElementById("startMonth").options[parseInt(earliestDate.substring(5,7)) - 1].selected = true;
+  document.getElementById("startDay").options[parseInt(earliestDate.substring(8, 10))-1].selected = true;
+  var yearDif = parseInt(latestDate.substring(0, 4)) - parseInt(earliestDate.substring(0, 4));
+  document.getElementById("startYear").options[yearDif].selected = true;
 
-//Earliest Date: 2002-07-09 Latest Date: 2016-07-14
-document.getElementById("startMonth").options[6].selected = true;
-document.getElementById("startDay").options[8].selected = true;
-document.getElementById("startYear").options[14].selected = true;
-
-document.getElementById("endMonth").options[6].selected = true;
-document.getElementById("endDay").options[13].selected = true;
-document.getElementById("endYear").options[0].selected = true;
+  document.getElementById("endMonth").options[parseInt(latestDate.substring(5,7)) - 1].selected = true;
+  document.getElementById("endDay").options[parseInt(latestDate.substring(8, 10))-1].selected = true;
+  document.getElementById("endYear").options[0].selected = true;
 
