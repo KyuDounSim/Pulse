@@ -1,5 +1,6 @@
 /*
   Bar/Pie Chart with List Articles coordination with Time Brush
+  Created July 25,2016
   Last Edit: August 1, 2016
 */
 
@@ -12,7 +13,7 @@ var selectDepts = [];
 var categoryList, colorCategory;
 
 // Default Variable Values
-var fileName = "current.json";
+var fileName = "CSE.json";
 var step=1.2;
 var timeSelector= "month";
 var allCategories = ["Achievement", "Event", "News", "Seminar", "ThesisDefense"];
