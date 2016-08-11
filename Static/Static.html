@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <!--
     HTML for Time Selection Codes
-    Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js
-    Last Edit: Aug. 4, 2016
+    Works with StaticTImeSelect.js, StaticDept.js, StaticDeptCategory.js, StaticMoreDepts.js
+    Created: July 20, 2016
+    Last Edit: Aug. 9, 2016
 -->
 
 
 <head>
     <meta charset="utf-8">
-    <title>HKUST Pulse Bar Chart</title>
+    <title>HKUST Pulse</title>
     <link rel="stylesheet" type="text/css" href="Static.css">
 </head>
 <body>
     <div id="header">
-        <h1>HKUST Pulse</h1>
-        Show/Hide: 
+        <h1>Pulse of HKUST School of Engineering - Static Demo</h1> 
         <button type="button" onclick="showfilterbar()" id="filterbarbutton"> Show/Hide Filters</button>
         <button type="button" onclick="showarticlebar()" id="articlebarbutton"> Show/Hide Articles</button>
         <button type="button" onclick="showNotes()" id="showNotes">Show/Hide Notes</button>
+        <button type="button" onclick="showHelp()" id="showHelp">Help</button>
     </div>
 
-    <input type="text" id="notes">
-    </input>
+    <textarea type="text" id="notes">NOTES</textarea>
 
     <div id="filterbar">
         <h2>Filters</h2>
+        <p>
         <button type="button" onclick="filterGo()">Go</button>
         <button type="button" onclick="defaultFilter()">Reset</button>
+        </p>
         <ul>
             <li id="timePeriod"><label for="timePeriod">Time Period Per Bar</label>
                 <button type="button" onclick="day()">Daily</button>
@@ -44,12 +46,17 @@
                 <select name="endDay" id="endDay" size="1"></select>
                 <select name="endYear" id="endYear" size="1"></select>
             </li>
-            <li id="distinguish"><label for="distinguish">Distinguish By</label>
+            <li id="distinguish"><label for="distinguish">Show Bar Chart By</label>
                 <ul>
                     <li><input type="radio" name="distinguishBy" id="byCategory" value="category">Category</label></li>
                     <li><input type="radio" name="distinguishBy" id="byDept" value="dept" checked>Department</label></li>
                 </ul>
             </li>
+            <li id="distinguishPie"><label for="distinguishPie">Show Pie Chart By</label>
+                <ul>
+                    <li><input type="radio" name="distinguishPieBy" id="pieByCategory" value="category" checked>Category</label></li>
+                    <li><input type="radio" name="distinguishPieBy" id="pieByDept" value="dept" >Department</label></li>
+                </ul>
             <li id="category"><label for="category">Categories</label>
                 <ul>
                     <li><input type="checkbox" id="Achievement" checked><label for="Achievement">Achievements</label></li>
@@ -101,7 +108,7 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="moment.js"></script>
     <script src="StaticSelectButtons.js"></script>
-    <script src="StaticDeptCategory.js"></script>
+    <script src="StaticMoreDepts.js"></script>
 
 
 
